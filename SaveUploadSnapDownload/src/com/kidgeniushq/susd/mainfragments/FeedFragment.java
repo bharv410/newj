@@ -1,0 +1,245 @@
+package com.kidgeniushq.susd.mainfragments;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
+
+import com.habosa.javasnap.Snapchat;
+import com.habosa.javasnap.Story;
+import com.kidgeniushq.susd.BigView;
+import com.kidgeniushq.susd.MainActivity;
+import com.kidgeniushq.susd.R;
+import com.kidgeniushq.susd.VideoViewActivity;
+import com.kidgeniushq.susd.adapters.SnapAdapter;
+import com.kidgeniushq.susd.utility.Utility;
+
+public class FeedFragment extends Fragment {
+	GridView gv; //for images
+	int gridViewNum=0;
+	public static boolean requestInProgress = false;//so we don't load too much at once
+	public static List<Bitmap> imageList;
+	SnapAdapter sa;
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.activity_feed, container,
+				false);
+		return rootView;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+	}
+	public class GetSnap extends AsyncTask<Object, String, Bitmap> {
+		int curr;
+
+		public GetSnap( int cur) {
+			this.curr=cur;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			requestInProgress = true;
+		}
+
+		@Override
+		protected Bitmap doInBackground(Object... parameters) {
+			
+			if (curr < MainActivity.stories.length - 1) {
+				Bitmap bitmap = null;
+				Story current = MainActivity.stories[curr];
+				byte[] imageBytes = Snapchat.getStory(current);
+
+				if (current.isImage()) {
+					bitmap = Utility.getPhoto(imageBytes);
+
+				} else {
+					byte[] snapBytes=Snapchat.getStory(current);
+					File vidFile = new File(getActivity().getApplicationContext().getFilesDir()
+							+ "/video.mp4");
+					
+					if(snapBytes[0] == 0x50 && snapBytes[1] == 0x4B) {
+					    Log.d("snapBytes", "Snap is compressed in a ZIP file");
+					    ByteArrayInputStream zipInput = new ByteArrayInputStream(snapBytes);
+					    try {
+					        ZipInputStream zis = new ZipInputStream(zipInput);
+					        ZipEntry ze = zis.getNextEntry();
+
+					        while (ze != null) {
+					            String fileName = ze.getName();
+					            if (fileName.contains("media")) {
+					                FileOutputStream out = new FileOutputStream(vidFile);
+					                int leido;
+					                byte[] buffer = new byte[1024];
+					                while (0 < (leido = zis.read(buffer))) {
+					                    out.write(buffer, 0, leido);
+					                }
+					                out.close();
+					            }
+					            ze = zis.getNextEntry();
+					        }
+					    } catch (FileNotFoundException e) {
+					        e.printStackTrace();
+					    } catch (IOException e) {
+					        e.printStackTrace();
+					    }
+					} else {
+					    try {
+					        FileOutputStream out = new FileOutputStream(vidFile);
+					        out.write(snapBytes, 0, snapBytes.length);
+					        out.close();
+					    } catch (FileNotFoundException e) {
+					        e.printStackTrace();
+					    } catch (IOException e) {
+					        e.printStackTrace();
+					    }
+					}
+					
+					//Files.write(snapBytes, vidFile);
+					FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
+					mmr.setDataSource(Uri.fromFile(vidFile).toString());
+					bitmap=drawTextToBitmap(getActivity().getApplicationContext(),mmr.getFrameAtTime(1000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST),"Press to play video");
+					mmr.release();
+
+				}
+				return bitmap;
+			} else
+				return null;
+			
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap bitmap) {
+			
+			if (imageList==null) {
+				imageList = new ArrayList<Bitmap>();
+				gv = (GridView) getActivity().findViewById(R.id.gridview);
+				gv.setOnItemClickListener(new OnItemClickListener() {
+			        @Override
+			        public void onItemClick(AdapterView<?> parent, View v,
+			                int position, long id) {
+			        	//set current story & set flag to stop loadgiin
+			        	requestInProgress=true;
+			        	Utility.currentStory=MainActivity.stories[position];
+			            if(Utility.currentStory.isImage()){
+			            	getActivity().finish();
+			            	Utility.currentBitmap=imageList.get(position);
+			            	startActivity(new Intent(getActivity(),BigView.class));
+			            }else{
+			            	getActivity().finish();
+			            	startActivity(new Intent(getActivity(),VideoViewActivity.class));
+			            }
+			            	
+			            	
+			        }
+			    });
+				imageList.add(bitmap);
+				sa = new SnapAdapter(getActivity().getApplicationContext(),
+						getActivity());
+				gv.setAdapter(sa);
+			}else{
+				imageList.add(bitmap);
+				sa.notifyDataSetInvalidated();
+				gv.invalidateViews();
+			}
+			requestInProgress = false;
+		}
+	}
+	
+	public void addImagesToScreen(){
+			for(int i=0; i<7;i++){
+				GetSnap gs = new GetSnap(gridViewNum);
+				gs.execute();
+				gridViewNum++;
+			}
+	}
+	
+	public Bitmap drawTextToBitmap(Context mContext,  Bitmap bitmap,  String mText) {
+	    try {
+	         Resources resources = mContext.getResources();
+	            float scale = resources.getDisplayMetrics().density;
+
+	            android.graphics.Bitmap.Config bitmapConfig =   bitmap.getConfig();
+	            // set default bitmap config if none
+	            if(bitmapConfig == null) {
+	              bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+	            }
+	            bitmap = bitmap.copy(bitmapConfig, true);
+
+	            Canvas canvas = new Canvas(bitmap);
+	            // new antialised Paint
+	            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	            // text color - #3D3D3D
+	            paint.setColor(Color.rgb(255,255, 255));
+	            // text size in pixels
+	            paint.setTextSize((int) (28 * scale));
+	            // text shadow
+	            paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
+
+	            // draw text to the Canvas center
+	            Rect bounds = new Rect();
+	            paint.getTextBounds(mText, 0, mText.length(), bounds);
+	            int x = (bitmap.getWidth() - bounds.width())/6;
+	            int y = (bitmap.getHeight() + bounds.height())/5;
+
+	          canvas.drawText(mText, x * scale, y * scale, paint);
+
+	            return bitmap;
+	    } catch (Exception e) {
+	        return null;
+	    }
+
+	  }
+	public final class GVOnScrollListener implements AbsListView.OnScrollListener {
+	       @Override 
+	       public void onScroll(AbsListView view, int firstVisibleItem,
+	                int visibleItemCount, int totalItemCount) {
+	    	  
+	           if (!requestInProgress && (totalItemCount - visibleItemCount) <= (firstVisibleItem + 2)) {
+	               // I load the next page of gigs using a background task,
+	               // but you can call any function here.
+	   				GetSnap gs = new GetSnap(gridViewNum);
+	   				gs.execute();
+	   				gridViewNum++;
+	   			
+	           }
+
+	        }
+
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+}
