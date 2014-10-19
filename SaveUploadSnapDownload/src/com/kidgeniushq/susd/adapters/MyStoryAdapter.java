@@ -8,8 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.kidgeniushq.susd.MainActivity;
 import com.kidgeniushq.susd.R;
+import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.Utility;
 
 public class MyStoryAdapter extends BaseAdapter {
@@ -22,7 +22,7 @@ public class MyStoryAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return MainActivity.allMyStories.size();
+        return MyApplication.allMyStories.size();
     }
 
     @Override
@@ -49,8 +49,8 @@ public class MyStoryAdapter extends BaseAdapter {
 			}
 			picture = (ImageView) v.getTag(R.id.picture);
 			name = (TextView) v.getTag(R.id.text);
-			name.setText(MainActivity.allMyStories.get(i).toString());
-			picture.setImageBitmap(Utility.getPhoto(MainActivity.allMyStories.get(i).getData()));
+			name.setText(MyApplication.allMyStories.get(i).toString());
+			picture.setImageBitmap(Utility.getPhoto(MyApplication.allMyStories.get(i).getData()));
 			System.out.println("Adding mystory");
 
 			return v;

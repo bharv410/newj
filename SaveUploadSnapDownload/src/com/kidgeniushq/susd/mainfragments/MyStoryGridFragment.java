@@ -10,28 +10,44 @@ import android.widget.ListView;
 
 import com.kidgeniushq.susd.R;
 import com.kidgeniushq.susd.adapters.MyStoryAdapter;
+import com.kidgeniushq.susd.utility.MyApplication;
 
 public class MyStoryGridFragment extends Fragment {
 
     Boolean isDualPane;
-    GridView gridView;
+    public GridView gridView;
     ListView listView;
     int position;
-
+    MyStoryAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_feed, container, false);
+        if(MyApplication.allMyStories!=null){
+        	if(MyApplication.allMyStories.size()>0){
+        		setStoryAdapter();
+            }
+        }
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(MyApplication.allMyStories!=null){
+			if(gridView==null){
+	    	setStoryAdapter();
+		}
+		}
     }
 		
     public void setStoryAdapter(){
     	gridView = (GridView) getActivity().findViewById(R.id.gridview);
-        gridView.setAdapter(new MyStoryAdapter(getActivity().getApplicationContext()));
+    	mAdapter=new MyStoryAdapter(getActivity().getApplicationContext());
+        gridView.setAdapter(mAdapter);
+    }
+    public void refreshGridView(){
+    	gridView.invalidateViews();
+    	mAdapter.notifyDataSetChanged();
     }
 }

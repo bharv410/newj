@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.kidgeniushq.susd.MainActivity;
+import com.kidgeniushq.susd.utility.MyApplication;
 
 public class UploadStoryAsyncTask extends AsyncTask<String, Void, Boolean> {
 	Context context;
@@ -30,7 +30,7 @@ public class UploadStoryAsyncTask extends AsyncTask<String, Void, Boolean> {
 	@Override
 	protected Boolean doInBackground(String... params) {
 		File file=new File(activity.getFilesDir() + "/image");
-		boolean result = MainActivity.snapchat.sendStory(file, isItAVideo, 8, "");
+		boolean result = MyApplication.snapchat.sendStory(file, isItAVideo, 8, "");
 		return result;
 	}
 

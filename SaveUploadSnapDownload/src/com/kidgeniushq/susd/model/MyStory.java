@@ -9,11 +9,13 @@ public class MyStory {
 	public MyStory() {
 
 	}
-	public MyStory(int vc, String i, String d, byte[] sd) {
+	public MyStory(int vc, String i, String d) {
 this.viewCount=vc;
 this.id=i;
 this.date=d;
-this.snapData=sd;
+	}
+	public void setImageBytes(byte[] data){
+		this.snapData=data;
 	}
 	@Override
 	public String toString(){

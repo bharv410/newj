@@ -11,9 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.kidgeniushq.susd.MainActivity;
 import com.kidgeniushq.susd.R;
-import com.kidgeniushq.susd.mainfragments.FeedFragment;
+import com.kidgeniushq.susd.utility.MyApplication;
 
 public class SnapAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
@@ -30,17 +29,17 @@ public class SnapAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		//set this as the limit so i can hack avoid problm
-		return FeedFragment.imageList.size();
+		return MyApplication.imageList.size();
 	}
 
 	@Override
 	public Object getItem(int i) {
-		return MainActivity.stories[i];
+		return MyApplication.stories[i];
 	}
 
 	@Override
 	public long getItemId(int i) {
-		return (long) (MainActivity.stories[i].hashCode());
+		return (long) (MyApplication.stories[i].hashCode());
 	}
 
 	@Override
@@ -58,7 +57,7 @@ public class SnapAdapter extends BaseAdapter {
 			}
 			picture = (ImageView) v.getTag(R.id.picture);
 			name = (TextView) v.getTag(R.id.text);
-			name.setText(MainActivity.stories[i].getSender());
+			name.setText(MyApplication.stories[i].getSender());
 			DisplayMetrics dimension = new DisplayMetrics();
 			activity.getWindowManager().getDefaultDisplay()
 					.getMetrics(dimension);
@@ -66,12 +65,10 @@ public class SnapAdapter extends BaseAdapter {
 
 			try{
 							picture.setImageBitmap(Bitmap.createScaledBitmap(
-									FeedFragment.imageList.get(i), width / 2, 3 * width / 4, true));
+									MyApplication.imageList.get(i), width / 2, 3 * width / 4, true));
 			}catch(Exception e){
 				
 			}
-			System.out.println("Adding immage");
-
 			return v;
 		} catch (Exception e) {
 			e.printStackTrace();

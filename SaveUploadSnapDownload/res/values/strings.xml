@@ -9,5 +9,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_big_view">BigView</string>
     <string name="title_activity_video_view">VideoViewActivity</string>
+    <string name="title_activity_send_image">SendImageActivity</string>
 
 </resources>

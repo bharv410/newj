@@ -12,6 +12,7 @@ import com.kidgeniushq.susd.MainActivity;
 import com.kidgeniushq.susd.R;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
 import com.kidgeniushq.susd.mainfragments.MyStoryGridFragment;
+import com.kidgeniushq.susd.utility.MyApplication;
 
 public class LoginAsyncTask extends AsyncTask<String, Void, String> {
 Context context;
@@ -24,7 +25,6 @@ String[] welcomeMessages;
 		activity=act;
 		welcomeMessages=new String[5];
 		welcomeMessages[0]="Just wait a sec";
-		
 	}
 	
 	@Override
@@ -35,28 +35,20 @@ String[] welcomeMessages;
     }
     @Override
     protected String doInBackground(String... params) {
-    	MainActivity.snapchat = Snapchat.login(params[0], params[1]);
+    	MyApplication.snapchat = Snapchat.login(params[0], params[1]);
+    	MyApplication.myFriends=MyApplication.snapchat.getFriends();
         return "Executed";
     }
 
     @Override
     protected void onPostExecute(String result) {
-    	progress.dismiss();
-    	
-    	if(MainActivity.snapchat!=null){
-    		//succesfully loggedin
-    	Toast.makeText(context, "logged in", Toast.LENGTH_SHORT).show();
-    	//load images
-    	
-    	//grab stories
+    	progress.dismiss();    			
+    	if(MyApplication.snapchat!=null){
     	GetStoriesAsyncTask gsat= new GetStoriesAsyncTask(context,activity);
     	gsat.execute();
     	}else
-    		Toast.makeText(context, "error", Toast.LENGTH_SHORT).show();
-                
-    }
-
-    
+    		Toast.makeText(context, "wrong username or passwoord", Toast.LENGTH_SHORT).show();
+    }    
 
     @Override
     protected void onProgressUpdate(Void... values) {}

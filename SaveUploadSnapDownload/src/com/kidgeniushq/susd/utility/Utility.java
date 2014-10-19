@@ -16,8 +16,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Utility {
-	public static Story currentStory;
-	public static Bitmap currentBitmap;
+	
 	
 	public static byte[] getBytes(InputStream inputStream) {
 		ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();

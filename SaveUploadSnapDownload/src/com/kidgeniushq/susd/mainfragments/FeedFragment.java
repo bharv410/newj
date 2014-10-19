@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -29,24 +28,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 import com.habosa.javasnap.Snapchat;
 import com.habosa.javasnap.Story;
 import com.kidgeniushq.susd.BigView;
-import com.kidgeniushq.susd.MainActivity;
 import com.kidgeniushq.susd.R;
 import com.kidgeniushq.susd.VideoViewActivity;
 import com.kidgeniushq.susd.adapters.SnapAdapter;
+import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.Utility;
 
 public class FeedFragment extends Fragment {
 	GridView gv; //for images
 	int gridViewNum=0;
-	public static boolean requestInProgress = false;//so we don't load too much at once
-	public static List<Bitmap> imageList;
 	SnapAdapter sa;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -69,15 +68,15 @@ public class FeedFragment extends Fragment {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			requestInProgress = true;
+			MyApplication.requestInProgress = true;
 		}
 
 		@Override
 		protected Bitmap doInBackground(Object... parameters) {
 			
-			if (curr < MainActivity.stories.length - 1) {
+			if (curr < MyApplication.stories.length - 1) {
 				Bitmap bitmap = null;
-				Story current = MainActivity.stories[curr];
+				Story current = MyApplication.stories[curr];
 				byte[] imageBytes = Snapchat.getStory(current);
 
 				if (current.isImage()) {
@@ -86,7 +85,20 @@ public class FeedFragment extends Fragment {
 				} else {
 					byte[] snapBytes=Snapchat.getStory(current);
 					File vidFile = new File(getActivity().getApplicationContext().getFilesDir()
-							+ "/video.mp4");
+							+ "/"+curr+"video.mp4");
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
+					System.out.println(vidFile.getAbsolutePath());
 					
 					if(snapBytes[0] == 0x50 && snapBytes[1] == 0x4B) {
 					    Log.d("snapBytes", "Snap is compressed in a ZIP file");
@@ -124,60 +136,56 @@ public class FeedFragment extends Fragment {
 					        e.printStackTrace();
 					    }
 					}
-					
-					//Files.write(snapBytes, vidFile);
 					FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
 					mmr.setDataSource(Uri.fromFile(vidFile).toString());
 					bitmap=drawTextToBitmap(getActivity().getApplicationContext(),mmr.getFrameAtTime(1000000, FFmpegMediaMetadataRetriever.OPTION_CLOSEST),"Press to play video");
 					mmr.release();
-
 				}
 				return bitmap;
 			} else
 				return null;
-			
 		}
 
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
-			
-			if (imageList==null) {
-				imageList = new ArrayList<Bitmap>();
+			if (MyApplication.imageList==null) {
+				MyApplication.imageList = new ArrayList<Bitmap>();
 				gv = (GridView) getActivity().findViewById(R.id.gridview);
 				gv.setOnItemClickListener(new OnItemClickListener() {
 			        @Override
 			        public void onItemClick(AdapterView<?> parent, View v,
 			                int position, long id) {
 			        	//set current story & set flag to stop loadgiin
-			        	requestInProgress=true;
-			        	Utility.currentStory=MainActivity.stories[position];
-			            if(Utility.currentStory.isImage()){
-			            	getActivity().finish();
-			            	Utility.currentBitmap=imageList.get(position);
+			        	MyApplication.requestInProgress=true;
+			        	MyApplication.currentStory=MyApplication.stories[position];
+			            if(MyApplication.currentStory.isImage()){
+			            	MyApplication.currentBitmap=MyApplication.imageList.get(position);
 			            	startActivity(new Intent(getActivity(),BigView.class));
 			            }else{
-			            	getActivity().finish();
-			            	startActivity(new Intent(getActivity(),VideoViewActivity.class));
+			            	Intent i=new Intent(getActivity(),VideoViewActivity.class);
+			            	MyApplication.vidIndex=position;
+			            	startActivity(i);
 			            }
 			            	
 			            	
 			        }
 			    });
-				imageList.add(bitmap);
+				MyApplication.imageList.add(bitmap);
 				sa = new SnapAdapter(getActivity().getApplicationContext(),
 						getActivity());
 				gv.setAdapter(sa);
+				gv.setOnScrollListener(new GVOnScrollListener());
 			}else{
-				imageList.add(bitmap);
+				MyApplication.imageList.add(bitmap);
 				sa.notifyDataSetInvalidated();
 				gv.invalidateViews();
 			}
-			requestInProgress = false;
+			MyApplication.requestInProgress = false;
 		}
 	}
 	
 	public void addImagesToScreen(){
-			for(int i=0; i<7;i++){
+			for(int i=0; i<10;i++){
 				GetSnap gs = new GetSnap(gridViewNum);
 				gs.execute();
 				gridViewNum++;
@@ -224,22 +232,17 @@ public class FeedFragment extends Fragment {
 	       @Override 
 	       public void onScroll(AbsListView view, int firstVisibleItem,
 	                int visibleItemCount, int totalItemCount) {
-	    	  
-	           if (!requestInProgress && (totalItemCount - visibleItemCount) <= (firstVisibleItem + 2)) {
-	               // I load the next page of gigs using a background task,
-	               // but you can call any function here.
-	   				GetSnap gs = new GetSnap(gridViewNum);
+	    	   System.out.print(""+totalItemCount);
+	    	   if(firstVisibleItem + visibleItemCount >= totalItemCount-2){
+	               // End has been reached
+	    		   GetSnap gs = new GetSnap(gridViewNum);
 	   				gs.execute();
 	   				gridViewNum++;
-	   			
-	           }
-
+	    	   }
 	        }
-
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 			// TODO Auto-generated method stub
-			
 		}
 	}
 }
