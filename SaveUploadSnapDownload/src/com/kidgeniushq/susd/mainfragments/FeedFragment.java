@@ -2,14 +2,18 @@ package com.kidgeniushq.susd.mainfragments;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -21,6 +25,8 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +51,7 @@ public class FeedFragment extends Fragment {
 	GridView gv; //for images
 	int gridViewNum=0;
 	SnapAdapter sa;
+	public File[] vidFiles;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +64,7 @@ public class FeedFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		
 	}
 	public class GetSnap extends AsyncTask<Object, String, Bitmap> {
 		int curr;
@@ -73,7 +81,7 @@ public class FeedFragment extends Fragment {
 
 		@Override
 		protected Bitmap doInBackground(Object... parameters) {
-			
+			try{
 			if (curr < MyApplication.stories.length - 1) {
 				Bitmap bitmap = null;
 				Story current = MyApplication.stories[curr];
@@ -84,8 +92,11 @@ public class FeedFragment extends Fragment {
 
 				} else {
 					byte[] snapBytes=Snapchat.getStory(current);
-					File vidFile = new File(getActivity().getApplicationContext().getFilesDir()
-							+ "/"+curr+"video.mp4");
+					File sdCard = Environment.getExternalStorageDirectory();
+					File dir = new File (sdCard.getAbsolutePath() + "/dir1/dir2");
+					dir.mkdirs();
+					File vidFile = new File(dir, "/"+curr+"video.mp4");
+					vidFiles[curr]=vidFile;
 					System.out.println(vidFile.getAbsolutePath());
 					System.out.println(vidFile.getAbsolutePath());
 					System.out.println(vidFile.getAbsolutePath());
@@ -144,11 +155,15 @@ public class FeedFragment extends Fragment {
 				return bitmap;
 			} else
 				return null;
+			}catch(Exception e){
+				return null;
+			}
 		}
 
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
 			if (MyApplication.imageList==null) {
+				
 				MyApplication.imageList = new ArrayList<Bitmap>();
 				gv = (GridView) getActivity().findViewById(R.id.gridview);
 				gv.setOnItemClickListener(new OnItemClickListener() {
@@ -162,6 +177,7 @@ public class FeedFragment extends Fragment {
 			            	MyApplication.currentBitmap=MyApplication.imageList.get(position);
 			            	startActivity(new Intent(getActivity(),BigView.class));
 			            }else{
+			            	saveVid(position);
 			            	Intent i=new Intent(getActivity(),VideoViewActivity.class);
 			            	MyApplication.vidIndex=position;
 			            	startActivity(i);
@@ -245,4 +261,34 @@ public class FeedFragment extends Fragment {
 			// TODO Auto-generated method stub
 		}
 	}
-}
+	
+	private void saveVid(int index){
+		// Save the name and description of a video in a ContentValues map.  
+        ContentValues values = new ContentValues(2);
+        values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
+        //values.put(MediaStore.Video.Media.DATA, vidFile.getAbsolutePath()); 
+        System.out.print(vidFiles[index].getAbsolutePath());
+        // Add a new record (identified by uri) without the video, but with the values just set.
+        Uri uri = getActivity().getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+
+        // Now get a handle to the file for that record, and save the data into it.
+        try {
+            InputStream is = new FileInputStream(vidFiles[index]);
+            OutputStream os = getActivity().getContentResolver().openOutputStream(uri);
+            byte[] buffer = new byte[4096]; // tweaking this number may increase performance
+            int len;
+            while ((len = is.read(buffer)) != -1){
+                os.write(buffer, 0, len);
+            }
+            os.flush();
+            is.close();
+            os.close();
+            Toast.makeText(getActivity(), "SAVED!",Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("Video activity", "exception while writing video: ", e);
+        } 
+
+        getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+	}
+	}
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- If you want the image to be Self Destroy Snap Chat like 
+    you need to set this to True -->
+    <bool name="self_destroy">false</bool>
+	
+	
+	<!-- AdMob Unit Id -->
+    <string name="ad_unit_ids">ca-app-pub-4742368221536941/7511722518</string>
+	
+    <!-- Here you will chose where to show ads 
+    it's true or false
+    
+    if you want the ads to be shown on the page you just enter a true
+    if you DON'T want the ads to be shown on any page just enter false
+    
+    as you will see on the next section  -->
+    
+    <!-- Ads On Login Page -->
+    <bool name="adLogin">true</bool>
+    <!-- Ads On Signup Page -->
+    <bool name="adSignup">true</bool>
+    <!-- Ads on Edit Friends Page -->
+    <bool name="adEditFriends">true</bool>
+    <!-- Ads on Forget Password Page -->
+    <bool name="adForgetPassword">true</bool>
+    <!-- Ads on Friends List Page -->
+    <bool name="adFriends">true</bool>
+    <!-- Ads on Inbox Page -->
+    <bool name="adInbox">true</bool>
+    <!-- Ads on Profile Page -->
+    <bool name="adProfile">true</bool>
+    <!-- Ads on Chose to who send message page -->
+    <bool name="adRecipients">true</bool>
+    <!-- Ads on View Profile Page -->
+    <bool name="adViewProfile">true</bool>
+    <!-- Ads on View Image Page -->
+    <bool name="adViewImage">true</bool>
+    
+</resources>

@@ -27,7 +27,7 @@
         android:layout_toRightOf="@+id/middleView1"
         android:gravity="center"
         android:onClick="uploadVideo"
-        android:text="choose video" />
+        android:text="DESIGN SNAPSTERPIECE (under construction)" />
 
     <Button
         android:id="@+id/choosePicButton"
@@ -39,6 +39,6 @@
         android:layout_alignRight="@+id/middleView1"
         android:gravity="center"
         android:onClick="uploadImage"
-        android:text="choose image" />
+        android:text="SEND SNAP OR UPLOAD STORY" />
 
 </RelativeLayout>

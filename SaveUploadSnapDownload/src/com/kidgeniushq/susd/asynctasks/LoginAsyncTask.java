@@ -36,7 +36,6 @@ String[] welcomeMessages;
     @Override
     protected String doInBackground(String... params) {
     	MyApplication.snapchat = Snapchat.login(params[0], params[1]);
-    	MyApplication.myFriends=MyApplication.snapchat.getFriends();
         return "Executed";
     }
 

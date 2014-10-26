@@ -15,6 +15,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -49,8 +50,11 @@ import com.kidgeniushq.susd.utility.MyApplication;
 		progressDialog.setMessage("Loading...");
 		progressDialog.setCancelable(false);
 		progressDialog.show();
-		vidFile = new File(getFilesDir() + "/"
-				+ MyApplication.vidIndex + "video.mp4");
+
+		File sdCard = Environment.getExternalStorageDirectory();
+		File dir = new File (sdCard.getAbsolutePath() + "/dir1/dir2");
+		dir.mkdirs();
+		vidFile = new File(dir, "/"+MyApplication.vidIndex+"video.mp4");
 		System.out.print(vidFile.getAbsolutePath());
 
 		try {
@@ -114,17 +118,14 @@ import com.kidgeniushq.susd.utility.MyApplication;
 		// Save the name and description of a video in a ContentValues map.  
         ContentValues values = new ContentValues(2);
         values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
-        values.put(MediaStore.Video.Media.DATA, vidFile.getAbsolutePath()); 
+        //values.put(MediaStore.Video.Media.DATA, vidFile.getAbsolutePath()); 
         System.out.print(vidFile.getAbsolutePath());
         // Add a new record (identified by uri) without the video, but with the values just set.
         Uri uri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
 
         // Now get a handle to the file for that record, and save the data into it.
         try {
-        	File f = new File(getFilesDir() + "/"
-    				+ MyApplication.vidIndex + "video.mp4");
-        	
-            InputStream is = new FileInputStream(f);
+            InputStream is = new FileInputStream(vidFile);
             OutputStream os = getContentResolver().openOutputStream(uri);
             byte[] buffer = new byte[4096]; // tweaking this number may increase performance
             int len;

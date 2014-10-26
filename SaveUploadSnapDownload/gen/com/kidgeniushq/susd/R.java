@@ -297,13 +297,56 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int vpiUnderlinePageIndicatorStyle=0x7f010005;
     }
     public static final class bool {
+        /**  Ads on Edit Friends Page 
+         */
+        public static final int adEditFriends=0x7f060008;
+        /**  Ads on Forget Password Page 
+         */
+        public static final int adForgetPassword=0x7f060009;
+        /**  Ads on Friends List Page 
+         */
+        public static final int adFriends=0x7f06000a;
+        /**  Ads on Inbox Page 
+         */
+        public static final int adInbox=0x7f06000b;
+        /**  Here you will chose where to show ads 
+    it's true or false
+    
+    if you want the ads to be shown on the page you just enter a true
+    if you DON'T want the ads to be shown on any page just enter false
+    
+    as you will see on the next section  
+ Ads On Login Page 
+         */
+        public static final int adLogin=0x7f060006;
+        /**  Ads on Profile Page 
+         */
+        public static final int adProfile=0x7f06000c;
+        /**  Ads on Chose to who send message page 
+         */
+        public static final int adRecipients=0x7f06000d;
+        /**  Ads On Signup Page 
+         */
+        public static final int adSignup=0x7f060007;
+        /**  Ads on View Image Page 
+         */
+        public static final int adViewImage=0x7f06000f;
+        /**  Ads on View Profile Page 
+         */
+        public static final int adViewProfile=0x7f06000e;
         public static final int default_circle_indicator_centered=0x7f060000;
         public static final int default_circle_indicator_snap=0x7f060001;
         public static final int default_line_indicator_centered=0x7f060002;
         public static final int default_title_indicator_selected_bold=0x7f060003;
         public static final int default_underline_indicator_fades=0x7f060004;
+        /**  If you want the image to be Self Destroy Snap Chat like 
+    you need to set this to True 
+         */
+        public static final int self_destroy=0x7f060005;
     }
     public static final class color {
+        public static final int apptheme_color=0x7f050013;
+        public static final int background_purple=0x7f050011;
         public static final int default_circle_indicator_fill_color=0x7f050008;
         public static final int default_circle_indicator_page_color=0x7f050009;
         public static final int default_circle_indicator_stroke_color=0x7f05000a;
@@ -313,6 +356,16 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int default_title_indicator_selected_color=0x7f05000e;
         public static final int default_title_indicator_text_color=0x7f05000f;
         public static final int default_underline_indicator_selected_color=0x7f050010;
+        public static final int focused_purple_button=0x7f050016;
+        public static final int light_gray=0x7f050012;
+        public static final int light_purple_background=0x7f050018;
+        public static final int light_purple_button=0x7f050014;
+        public static final int pressed_purple_button=0x7f050015;
+        public static final int swipeRefresh1=0x7f050019;
+        public static final int swipeRefresh2=0x7f05001a;
+        public static final int swipeRefresh3=0x7f05001b;
+        public static final int swipeRefresh4=0x7f05001c;
+        public static final int text_color=0x7f050017;
         public static final int vpi__background_holo_dark=0x7f050000;
         public static final int vpi__background_holo_light=0x7f050001;
         public static final int vpi__bright_foreground_disabled_holo_dark=0x7f050004;
@@ -321,8 +374,8 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int vpi__bright_foreground_holo_light=0x7f050003;
         public static final int vpi__bright_foreground_inverse_holo_dark=0x7f050006;
         public static final int vpi__bright_foreground_inverse_holo_light=0x7f050007;
-        public static final int vpi__dark_theme=0x7f050011;
-        public static final int vpi__light_theme=0x7f050012;
+        public static final int vpi__dark_theme=0x7f05001d;
+        public static final int vpi__light_theme=0x7f05001e;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -347,48 +400,70 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int default_title_indicator_text_size=0x7f08000a;
         public static final int default_title_indicator_title_padding=0x7f08000b;
         public static final int default_title_indicator_top_padding=0x7f08000c;
+        public static final int inbox_horizontal_margin=0x7f080013;
+        public static final int inbox_vertical_margin=0x7f080014;
+        public static final int login_horizontal_padding=0x7f080011;
+        public static final int login_vertical_margin=0x7f080010;
+        public static final int login_vertical_padding=0x7f080012;
+        public static final int message_list_item_vertical_margin=0x7f08000f;
+        public static final int message_vertical_padding=0x7f080015;
+        public static final int user_grid_spacing=0x7f080016;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
-        public static final int vpi__tab_indicator=0x7f020001;
-        public static final int vpi__tab_selected_focused_holo=0x7f020002;
-        public static final int vpi__tab_selected_holo=0x7f020003;
-        public static final int vpi__tab_selected_pressed_holo=0x7f020004;
-        public static final int vpi__tab_unselected_focused_holo=0x7f020005;
-        public static final int vpi__tab_unselected_holo=0x7f020006;
-        public static final int vpi__tab_unselected_pressed_holo=0x7f020007;
+        public static final int avatar_empty=0x7f020000;
+        public static final int avatar_selected=0x7f020001;
+        public static final int ic_launcher=0x7f020002;
+        public static final int vpi__tab_indicator=0x7f020003;
+        public static final int vpi__tab_selected_focused_holo=0x7f020004;
+        public static final int vpi__tab_selected_holo=0x7f020005;
+        public static final int vpi__tab_selected_pressed_holo=0x7f020006;
+        public static final int vpi__tab_unselected_focused_holo=0x7f020007;
+        public static final int vpi__tab_unselected_holo=0x7f020008;
+        public static final int vpi__tab_unselected_pressed_holo=0x7f020009;
     }
     public static final class id {
         public static final int bigImageView=0x7f040006;
         public static final int bigVideoView=0x7f04000b;
         public static final int bottom=0x7f040003;
-        public static final int button1=0x7f040010;
-        public static final int button2=0x7f040012;
+        public static final int button1=0x7f040013;
+        public static final int button2=0x7f040015;
+        public static final int button3=0x7f040017;
+        public static final int button4=0x7f040018;
         public static final int checkBox1=0x7f04000c;
-        public static final int choosePicButton=0x7f040019;
-        public static final int chooseVidButton=0x7f040018;
+        public static final int checkImageView=0x7f040028;
+        public static final int choosePicButton=0x7f04001e;
+        public static final int chooseVidButton=0x7f04001d;
         public static final int code=0x7f04000d;
-        public static final int findSelected=0x7f040015;
-        public static final int friendsLV=0x7f040016;
-        public static final int grid_image=0x7f04001a;
-        public static final int grid_text=0x7f04001b;
+        public static final int errorsButton=0x7f040010;
+        public static final int feedbackButton=0x7f040011;
+        public static final int findSelected=0x7f04001b;
+        public static final int friendsGrid=0x7f040026;
+        public static final int friendsLV=0x7f04001c;
+        public static final int grid_image=0x7f04001f;
+        public static final int grid_text=0x7f040020;
         public static final int gridview=0x7f040007;
-        public static final int middleView1=0x7f040017;
+        public static final int imageCaptionEditText=0x7f040016;
+        public static final int messageIcon=0x7f040023;
+        public static final int middleView1=0x7f04000f;
+        public static final int nameLabel=0x7f040029;
         public static final int none=0x7f040000;
         public static final int pager=0x7f040008;
-        public static final int picture=0x7f04001c;
+        public static final int picture=0x7f040021;
         public static final int saveImageButton=0x7f040005;
         public static final int saveVideoButton=0x7f04000a;
-        public static final int section_label=0x7f04000e;
-        public static final int seekBar1=0x7f040013;
-        public static final int text=0x7f04001d;
-        public static final int textView1=0x7f040011;
-        public static final int time=0x7f040014;
+        public static final int section_label=0x7f040012;
+        public static final int seekBar1=0x7f040019;
+        public static final int sendButton=0x7f040027;
+        public static final int senderLabel=0x7f040024;
+        public static final int text=0x7f040022;
+        public static final int textView1=0x7f040014;
+        public static final int time=0x7f04001a;
+        public static final int timeLabel=0x7f040025;
         public static final int titles=0x7f040009;
         public static final int top=0x7f040004;
         public static final int triangle=0x7f040001;
         public static final int underline=0x7f040002;
-        public static final int uploadImageView=0x7f04000f;
+        public static final int uploadImageView=0x7f04000e;
     }
     public static final class integer {
         public static final int default_circle_indicator_orientation=0x7f070000;
@@ -404,23 +479,31 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int activity_send_image=0x7f030003;
         public static final int activity_video_view=0x7f030004;
         public static final int checkbox_listitem=0x7f030005;
-        public static final int fragment_main=0x7f030006;
-        public static final int fragment_send_image=0x7f030007;
-        public static final int fragment_sendtofriends=0x7f030008;
-        public static final int fragment_upload=0x7f030009;
-        public static final int grid_single=0x7f03000a;
-        public static final int gridview_item=0x7f03000b;
+        public static final int fragment_contact=0x7f030006;
+        public static final int fragment_main=0x7f030007;
+        public static final int fragment_send_image=0x7f030008;
+        public static final int fragment_sendtofriends=0x7f030009;
+        public static final int fragment_upload=0x7f03000a;
+        public static final int grid_single=0x7f03000b;
+        public static final int gridview_item=0x7f03000c;
+        public static final int message_item=0x7f03000d;
+        public static final int user_grid2=0x7f03000e;
+        public static final int user_item=0x7f03000f;
     }
     public static final class string {
-        public static final int action_settings=0x7f0a0005;
-        public static final int app_name=0x7f0a0000;
-        public static final int hello_world=0x7f0a0004;
-        public static final int title_activity_big_view=0x7f0a0006;
-        public static final int title_activity_send_image=0x7f0a0008;
-        public static final int title_activity_video_view=0x7f0a0007;
-        public static final int title_section1=0x7f0a0001;
-        public static final int title_section2=0x7f0a0002;
-        public static final int title_section3=0x7f0a0003;
+        public static final int action_settings=0x7f0a0006;
+        /**  AdMob Unit Id 
+ AdMob Unit Id 
+         */
+        public static final int ad_unit_ids=0x7f0a0000;
+        public static final int app_name=0x7f0a0001;
+        public static final int hello_world=0x7f0a0005;
+        public static final int title_activity_big_view=0x7f0a0007;
+        public static final int title_activity_send_image=0x7f0a0009;
+        public static final int title_activity_video_view=0x7f0a0008;
+        public static final int title_section1=0x7f0a0002;
+        public static final int title_section2=0x7f0a0003;
+        public static final int title_section3=0x7f0a0004;
     }
     public static final class style {
         public static final int TextAppearance_TabPageIndicator=0x7f090003;

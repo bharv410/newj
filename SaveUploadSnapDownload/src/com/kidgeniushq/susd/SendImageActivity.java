@@ -7,11 +7,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -23,6 +31,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -30,7 +39,7 @@ import com.kidgeniushq.susd.customui.NotSwipeableViewPager;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.Utility;
 
-public class SendImageActivity extends FragmentActivity {
+@TargetApi(Build.VERSION_CODES.HONEYCOMB) public class SendImageActivity extends FragmentActivity {
 
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	NotSwipeableViewPager mViewPager;
@@ -99,7 +108,7 @@ getActionBar().hide();
 	}
 	
 	public void setAsStory(View v){
-		new UploadStoryAsyncTask().execute();
+		Toast.makeText(getApplicationContext(), "Rate 5 stars & this feature will be unlocked by end of week!", Toast.LENGTH_SHORT).show();
 	}
 	
 	public void sendTo(View v){
@@ -108,29 +117,8 @@ getActionBar().hide();
 		tst.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
 		tst.show();
 	}
-	public class UploadStoryAsyncTask extends AsyncTask<String, Void, Boolean> {
-		@Override
-		protected Boolean doInBackground(String... params) {
-			boolean result = MyApplication.snapchat.sendStory(currentImageFile, false, 8, "");
-			return result;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {			
-			if (result){
-				Toast tst= 
-				Toast.makeText(getApplicationContext(),
-						"Succesfully Uploaded to Story", Toast.LENGTH_SHORT);
-				tst.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
-						tst.show();
-			}else{
-				Toast tst=Toast.makeText(getApplicationContext(),
-						"Sorry. .JPG files don't work at the momeny. Use a .PNG file", Toast.LENGTH_SHORT);
-				tst.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
-				tst.show();
-			}
-		}
-	}
+	
+	
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
@@ -148,13 +136,11 @@ getActionBar().hide();
 			// below).
 			return PlaceholderFragment.newInstance(position + 1);
 		}
-
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
 			return 3;
 		}
-
 		@Override
 		public CharSequence getPageTitle(int position) {
 			Locale l = Locale.getDefault();
@@ -170,13 +156,8 @@ getActionBar().hide();
 		}
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
 	public static class PlaceholderFragment extends Fragment {
-		
 		private static final String ARG_SECTION_NUMBER = "section_number";
-
 		public static PlaceholderFragment newInstance(int sectionNumber) {
 			PlaceholderFragment fragment = new PlaceholderFragment();
 			Bundle args = new Bundle();
@@ -195,5 +176,90 @@ getActionBar().hide();
 			return rootView;
 		}
 	}
+	
+	public void setBigText(View v){
+		ImageView imageViewForChosenPic = (ImageView) findViewById(R.id.uploadImageView);
+		try{
+		imageViewForChosenPic.setImageBitmap(drawBigTextToBitmap(getApplicationContext(),currentBitmap,((EditText)findViewById(R.id.imageCaptionEditText)).getText().toString()));
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		}
+	public void setSmallText(View v){
+		ImageView imageViewForChosenPic = (ImageView) findViewById(R.id.uploadImageView);
+		try{
+		imageViewForChosenPic.setImageBitmap(drawSmallTextToBitmap(getApplicationContext(),currentBitmap,((EditText)findViewById(R.id.imageCaptionEditText)).getText().toString()));
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	public Bitmap drawSmallTextToBitmap(Context gContext, 
+			  Bitmap bm, 
+			  String gText) {
+			  Resources resources = gContext.getResources();
+			  float scale = resources.getDisplayMetrics().density;
+			  android.graphics.Bitmap.Config bitmapConfig =
+			      bm.getConfig();
+			  if(bitmapConfig == null) {
+			    bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+			  }
+			  Bitmap newBm = bm.copy(bitmapConfig, true);
+			  Canvas canvas = new Canvas(newBm);
+			  
+			  
+			  //set caption text
+			  Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+			  paint.setColor(Color.WHITE);
+			  paint.setTextSize((int) (24 * scale));
+			  paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
+			  Rect bounds = new Rect();
+			  paint.getTextBounds(gText, 0, gText.length(), bounds);
+			  int x = (newBm.getWidth() - bounds.width())/2;
+			  int y = (newBm.getHeight() + bounds.height())/2;
+			  
+			  
+			//set background
+			  int screenWidth = getApplicationContext().getResources().getDisplayMetrics().widthPixels;
+			  Rect greyBack = new Rect(0,newBm.getHeight()/2 + bounds.height(),screenWidth,newBm.getHeight()/2 - bounds.height());
+			  Paint paintBG = new Paint();
+			  paintBG.setARGB(128, 100, 100, 100); //added alpha because Snapchat has translucent //grey background
+			  canvas.drawRect(greyBack, paintBG);
+			  
+			  
+			  
+			  canvas.drawText(gText, x, y, paint);
+			  
+			
+			  
+			  return newBm;
+			}
+	public Bitmap drawBigTextToBitmap(Context gContext, 
+			  Bitmap bm, 
+			  String gText) {
+			  Resources resources = gContext.getResources();
+			  float scale = resources.getDisplayMetrics().density;
+			  android.graphics.Bitmap.Config bitmapConfig =
+			      bm.getConfig();
+			  if(bitmapConfig == null) {
+			    bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+			  }
+			  Bitmap newBm = bm.copy(bitmapConfig, true);
+			  Canvas canvas = new Canvas(newBm);
+			  
+			  
+			  //set caption text
+			  Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+			  paint.setColor(Color.WHITE);
+			  paint.setTextSize((int) (44 * scale));
+			  paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
+			  Rect bounds = new Rect();
+			  paint.getTextBounds(gText, 0, gText.length(), bounds);
+			  int x = (newBm.getWidth() - bounds.width())/2;
+			  int y = (newBm.getHeight() + bounds.height())/2;
+			  
+			  canvas.drawText(gText, x, y, paint);
+			  
+			  return newBm;
+			}
 
 }

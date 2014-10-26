@@ -51,4 +51,34 @@
         android:text="Send to.."
         android:onClick="sendTo" />
 
+    <EditText
+        android:id="@+id/imageCaptionEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/uploadImageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/button1"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/uploadImageView"
+        android:layout_toRightOf="@+id/imageCaptionEditText"
+        android:onClick="setBigText"
+        android:text="big" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/uploadImageView"
+        android:layout_alignRight="@+id/uploadImageView"
+        android:text="small"
+        android:onClick="setSmallText" />
+
 </RelativeLayout>
