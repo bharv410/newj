@@ -19,7 +19,6 @@ import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.kidgeniushq.susd.utility.MyApplication;
 
@@ -35,7 +34,13 @@ public class BigView extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_big_view);
-		getActionBar().hide();
+		
+		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().hide();
+		} 
+		
+		
 		iv = (ImageView) findViewById(R.id.bigImageView);
 		iv.setImageBitmap(MyApplication.currentBitmap);
 

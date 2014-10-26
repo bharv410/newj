@@ -249,11 +249,15 @@ public class FeedFragment extends Fragment {
 	       public void onScroll(AbsListView view, int firstVisibleItem,
 	                int visibleItemCount, int totalItemCount) {
 	    	   System.out.print(""+totalItemCount);
-	    	   if(firstVisibleItem + visibleItemCount >= totalItemCount-2){
+	    	   if(firstVisibleItem + visibleItemCount >= totalItemCount-2 && !MyApplication.requestInProgress){
 	               // End has been reached
+	    		   try{
 	    		   GetSnap gs = new GetSnap(gridViewNum);
 	   				gs.execute();
-	   				gridViewNum++;
+	    		   }catch(Exception e){
+	    			   getActivity().finish();
+	    		   }
+	    		   gridViewNum++;
 	    	   }
 	        }
 		@Override

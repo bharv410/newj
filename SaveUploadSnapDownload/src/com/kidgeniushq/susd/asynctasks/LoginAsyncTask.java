@@ -4,14 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.habosa.javasnap.Snapchat;
-import com.kidgeniushq.susd.MainActivity;
-import com.kidgeniushq.susd.R;
-import com.kidgeniushq.susd.mainfragments.FeedFragment;
-import com.kidgeniushq.susd.mainfragments.MyStoryGridFragment;
 import com.kidgeniushq.susd.utility.MyApplication;
 
 public class LoginAsyncTask extends AsyncTask<String, Void, String> {
@@ -24,14 +19,13 @@ String[] welcomeMessages;
 		context=ctx;
 		activity=act;
 		welcomeMessages=new String[5];
-		welcomeMessages[0]="Just wait a sec";
+		welcomeMessages[0]="Please rate nicely in app store & leave suggestions for next week's improvements : )";
 	}
 	
 	@Override
     protected void onPreExecute() {
 		progress = ProgressDialog.show(this.activity, "Logging in...",
 			    welcomeMessages[0], true);
-    	
     }
     @Override
     protected String doInBackground(String... params) {

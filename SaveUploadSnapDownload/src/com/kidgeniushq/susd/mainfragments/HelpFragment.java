@@ -13,7 +13,7 @@ public class HelpFragment extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_send_image,
+		View rootView = inflater.inflate(R.layout.fragment_contact,
 				container, false);
 		return rootView;
 	}

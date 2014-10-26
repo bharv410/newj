@@ -18,7 +18,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,7 +35,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.kidgeniushq.susd.customui.NotSwipeableViewPager;
-import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.Utility;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB) public class SendImageActivity extends FragmentActivity {

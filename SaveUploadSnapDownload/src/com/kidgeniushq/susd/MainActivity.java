@@ -14,6 +14,7 @@ import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +34,6 @@ import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -53,6 +53,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 import com.viewpagerindicator.TitlePageIndicator;
 
 //icon by samuel green
@@ -78,71 +79,60 @@ import com.viewpagerindicator.TitlePageIndicator;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		try{
-		getActionBar().hide();
-		}catch(Exception e){
-			
-		}
-		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().hide();
+		} 
+		//this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		//getMyStories();
-		// alarm.setAlarm(getApplicationContext());
-		setupDialogListener();
-		
-		Map<String, String> networkDetails = getConnectionDetails();
-		  if (networkDetails.isEmpty()) {
-			  showDialog();
-		  }
-		
+		// alarm.setAlarm(getApplicationContext());		
 		login();
 		
-
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		//Bind the title indicator to the adapter
 		 TitlePageIndicator titleIndicator = (TitlePageIndicator)findViewById(R.id.titles);
 		 titleIndicator.setViewPager(mViewPager);
 	}
 
 	private void login() {
-		
-		MyApplication.username = "boutmabenjamins";
-		MyApplication.password = "iforgot05";
-		LoginAsyncTask lat = new LoginAsyncTask(getApplicationContext(),
-				MainActivity.this);
-		lat.execute(MyApplication.username, MyApplication.password);
+//		MyApplication.username = "boutmabenjamins";
+//		MyApplication.password = "iforgot05";
+//		LoginAsyncTask lat = new LoginAsyncTask(getApplicationContext(),
+//				MainActivity.this);
+//		lat.execute(MyApplication.username, MyApplication.password);
 
-//		 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-//		
-//		 alertDialog.setTitle("Login");
-//		 final EditText quantity = new EditText(MainActivity.this);
-//		 final EditText lot = new EditText(MainActivity.this);
-//		
-//		 quantity.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-//		 quantity.setHint("username");
-//		 lot.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-//		 lot.setHint("password");
-//		
-//		 LinearLayout ll = new LinearLayout(this);
-//		 ll.setOrientation(LinearLayout.VERTICAL);
-//		 ll.addView(quantity);
-//		 ll.addView(lot);
-//		 alertDialog.setView(ll);
-//		
-//		 alertDialog.setCancelable(false);
-//		 alertDialog.setPositiveButton("Login",
-//		 new DialogInterface.OnClickListener() {
-//		 public void onClick(DialogInterface dialog, int id) {
-//		 MyApplication.username = quantity.getText().toString();
-//		 MyApplication.password = lot.getText().toString();
-//		 LoginAsyncTask lat = new LoginAsyncTask(
-//		 getApplicationContext(), MainActivity.this);
-//		 lat.execute(MyApplication.username, MyApplication.password);
-//		 }
-//		 });
-//		 AlertDialog alert = alertDialog.create();
-//		 alert.show();
+		 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+		
+		 alertDialog.setTitle("Login");
+		 final EditText quantity = new EditText(MainActivity.this);
+		 final EditText lot = new EditText(MainActivity.this);
+		
+		 quantity.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+		 quantity.setHint("username");
+		 lot.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		 lot.setHint("password");
+		
+		 LinearLayout ll = new LinearLayout(this);
+		 ll.setOrientation(LinearLayout.VERTICAL);
+		 ll.addView(quantity);
+		 ll.addView(lot);
+		 alertDialog.setView(ll);
+		
+		 alertDialog.setCancelable(false);
+		 alertDialog.setPositiveButton("Login",
+		 new DialogInterface.OnClickListener() {
+		 public void onClick(DialogInterface dialog, int id) {
+		 MyApplication.username = quantity.getText().toString();
+		 MyApplication.password = lot.getText().toString();
+		 LoginAsyncTask lat = new LoginAsyncTask(
+		 getApplicationContext(), MainActivity.this);
+		 lat.execute(MyApplication.username, MyApplication.password);
+		 }
+		 });
+		 AlertDialog alert = alertDialog.create();
+		 alert.show();
 	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -221,10 +211,12 @@ import com.viewpagerindicator.TitlePageIndicator;
 		public Fragment getItem(int position) {
 			if (position == 0)
 				return new FeedFragment();
-			else if (position == 2)
+			else if (position == 1)
 				return new UploadFragment();
-			else
+			else if (position == 2)
 				return new HelpFragment();
+			else
+				return new AddFriendsFragment();
 //			else if (position == 2)
 //				return new MyStoryGridFragment();
 //			else
@@ -235,14 +227,18 @@ import com.viewpagerindicator.TitlePageIndicator;
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 2;
+			return 4;
 		}
 		@Override
         public CharSequence getPageTitle(int position) {
 			if (position == 0)
 				return "Feed";
-			else 
+			else if(position == 1)
 				return "Upload";
+			else if(position == 2)
+				return "Help";
+			else
+				return "Add Popular accounts!";
         }
 	}
 
@@ -265,13 +261,13 @@ import com.viewpagerindicator.TitlePageIndicator;
 		builder.setItems(new String[]{"Take Pic","Take Vid","Choose Pic","Choose Vid"}, mDialogListener);
 		AlertDialog dialog = builder.create();
 		dialog.show();
-		
 	}
 
 	public void uploadVideo(View v) {
 		startActivity(new Intent(this,SendImageActivity.class));
 	}
 
+	
 	private void getMyStories() {
 		System.out.println("GETTING MY STORIES");
 		MyApplication.allMyStories = new ArrayList<MyStory>();
@@ -459,6 +455,19 @@ import com.viewpagerindicator.TitlePageIndicator;
 			return null;
 		}
 	}
+	public void saveToParse(View v){
+		final ParseObject testObject = new ParseObject("PopularSuggestions");
+		testObject.put("name", ((EditText)findViewById(R.id.addFriendEditText)).getText().toString());
+		testObject.saveInBackground(new SaveCallback(){
+
+			@Override
+			public void done(ParseException arg0) {
+				Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_SHORT);
+				
+			}
+			
+		});
+	}
 	public void giveError(View v){
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
 	            "mailto","abc@gmail.com", null)); 
@@ -467,10 +476,13 @@ import com.viewpagerindicator.TitlePageIndicator;
 	}
 	
 	public void giveFeedback(View v){
-		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-	            "mailto","abc@gmail.com", null)); 
-	emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Snap Feedback"); 
-	startActivity(Intent.createChooser(emailIntent, "Send email..."));
+		Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
+		Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+		try { 
+		  startActivity(goToMarket);
+		} catch (ActivityNotFoundException e) {
+		  startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName())));
+		} 
 		
 	}
 	private void showDialog(){

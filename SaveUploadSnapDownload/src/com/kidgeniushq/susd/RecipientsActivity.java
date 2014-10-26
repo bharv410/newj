@@ -36,6 +36,7 @@ public class RecipientsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.user_grid2);
+		Toast.makeText(getApplicationContext(), "Captions & filters coming soon!!!", Toast.LENGTH_LONG).show();
 
 		// ADS
 		// Resources res = getResources();
