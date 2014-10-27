@@ -34,9 +34,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.habosa.javasnap.Snapchat;
 import com.habosa.javasnap.Story;
@@ -60,7 +60,7 @@ public class FeedFragment extends Fragment {
 				false);
 		return rootView;
 	}
-
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);

@@ -36,6 +36,7 @@ public class Utility {
 		
 		BitmapFactory.Options options=new BitmapFactory.Options();// Create object of bitmapfactory's option method for further option use
         options.inPurgeable = true; // inPurgeable is used to free up memory while required
+        options.inSampleSize = 2;
 		  return BitmapFactory.decodeByteArray(image, 0, image.length,options);
 		 }
 	public static Bitmap drawTextToBitmap(Context gContext, 

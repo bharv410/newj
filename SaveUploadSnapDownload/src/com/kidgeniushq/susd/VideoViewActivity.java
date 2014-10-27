@@ -22,9 +22,7 @@ import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import com.google.android.gms.analytics.HitBuilders;
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB) public class VideoViewActivity extends Activity {
 	private VideoView myVideoView;
@@ -40,7 +38,6 @@ import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_video_view);
-		((MyApplication) getApplication()).getTracker(MyApplication.TrackerName.APP_TRACKER);
 		getActionBar().hide();
 		if (mediaControls == null) {
 			mediaControls = new MediaController(VideoViewActivity.this);
@@ -114,22 +111,6 @@ import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 		myVideoView.seekTo(position);
 
 	}
-	@Override
-	public void onStart() { 
-        super.onStart(); 
-      //Get tracker.
-        com.google.android.gms.analytics.Tracker t = ((MyApplication) getApplication()).getTracker(
-         TrackerName.APP_TRACKER);
-
-        //Enable Advertising Features.
-        t.enableAdvertisingIdCollection(true);
-     // Set screen name.
-        //t.setScreenName(screenName);
-
-        // Send a screen view.
-        t.send(new HitBuilders.AppViewBuilder().build());
-
-    } 
 	
 	public void save(View v){
 		String title=MyApplication.currentStory.getSender()+MyApplication.currentStory.getCaption();

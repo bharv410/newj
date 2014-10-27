@@ -20,11 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.kidgeniushq.susd.adapters.UserAdapter;
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB) public class RecipientsActivity extends Activity {
 
@@ -41,7 +38,6 @@ import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.user_grid2);
-		((MyApplication) getApplication()).getTracker(MyApplication.TrackerName.APP_TRACKER);
 		Toast.makeText(getApplicationContext(), "Captions & filters coming soon!!!", Toast.LENGTH_LONG).show();
 
 		// ADS
@@ -63,23 +59,6 @@ import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 		mMediaUri = getIntent().getData();
 		mFileType = getIntent().getExtras().getString("fileType");
 	}
-	@Override
-	public void onStart() { 
-        super.onStart(); 
-      //Get tracker.
-        com.google.android.gms.analytics.Tracker t = ((MyApplication) getApplication()).getTracker(
-         TrackerName.APP_TRACKER);
-
-        //Enable Advertising Features.
-        t.enableAdvertisingIdCollection(true);
-     // Set screen name.
-        //t.setScreenName(screenName);
-
-        // Send a screen view.
-        t.send(new HitBuilders.AppViewBuilder().build());
-
-    } 
-
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -103,16 +82,6 @@ import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 	}
 
 	public void sendOut(View v) {
-		// Get tracker.
-        Tracker t = ((MyApplication)getApplication()).getTracker(
-            TrackerName.APP_TRACKER);
-        // Build and send an Event.
-        t.send(new HitBuilders.EventBuilder()
-            .setCategory("interaction")
-            .setAction("send snap")
-            .setLabel(" xxx ")
-            .build());
-
 		recipients = getRecipientIds();
 		// if(recipients.contains("My Story"))
 		// new UploadStoryAsyncTask().execute();
@@ -161,9 +130,7 @@ new SendToFriendsAsyncTask().execute();
 			}
 			boolean video = (getIntent().getStringExtra("fileType")
 					.contains(".mp4"));
-			
 			return MyApplication.snapchat.sendSnap(new File(mMediaUri.getPath()), recipients, video, story,10);
-			
 		}
 
 		@Override

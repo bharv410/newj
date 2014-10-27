@@ -31,7 +31,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -40,15 +39,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
 import com.kidgeniushq.susd.mainfragments.HelpFragment;
 import com.kidgeniushq.susd.mainfragments.UploadFragment;
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -60,6 +56,7 @@ import com.viewpagerindicator.LinePageIndicator;
 	ViewPager mViewPager;
 	Uri currImageURI;
 	Bitmap currentBitmap;
+	public static Context mContext;
 	public static final String TAG = MainActivity.class.getSimpleName();
 	public static final int TAKE_PHOTO_REQUEST = 0;
 	public static final int TAKE_VIDEO_REQUEST = 1;
@@ -70,13 +67,12 @@ import com.viewpagerindicator.LinePageIndicator;
 	public static final int FILE_SIZE_LIMIT = 1024*1024*10; // 10 MB
 	protected Uri mMediaUri;
 	protected DialogInterface.OnClickListener mDialogListener;
-	public Tracker t;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		t=((MyApplication) getApplication()).getTracker(MyApplication.TrackerName.APP_TRACKER);
+		mContext=getApplicationContext();
 		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().hide();
@@ -91,43 +87,6 @@ import com.viewpagerindicator.LinePageIndicator;
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setOffscreenPageLimit(4);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		mViewPager.setOnPageChangeListener(new OnPageChangeListener(){
-			 
-            @Override
-            public void onPageScrollStateChanged(int position) {}
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {}
-            @Override
-            public void onPageSelected(int position) {
-            	// Get tracker.
-                Tracker t = ((MyApplication) getApplication()).getTracker(
-                    TrackerName.APP_TRACKER);
-                switch(position){
-                case 0:
-                    // Set screen name.
-                    t.setScreenName("feed");
-                    break;
-
-                case 1:
-                    // Set screen name.
-                    t.setScreenName("upload");
-                    break;
-                case 2:
-                	// Set screen name.
-                    t.setScreenName("help");
-                    break;
-                case 3:
-                    // Set screen name.
-                    t.setScreenName("popular");
-                    break;
-                }
-             // Send a screen view.
-                t.send(new HitBuilders.AppViewBuilder().build());
-            }
-
-        });
-
-		
 		LinePageIndicator titleIndicator = (LinePageIndicator)findViewById(R.id.indicator);
 		 titleIndicator.setViewPager(mViewPager);
 	}

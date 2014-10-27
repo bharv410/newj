@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.habosa.javasnap.Friend;
+import com.habosa.javasnap.Snap;
 import com.habosa.javasnap.Story;
 import com.kidgeniushq.susd.R;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
@@ -27,6 +28,7 @@ public class GetStoriesAsyncTask extends AsyncTask<String, Void, String> {
 		    	MyApplication.myFriends=MyApplication.snapchat.getFriends();
 		    	Story[] storyObjs = MyApplication.snapchat.getStories();
 		    	MyApplication.stories = Story.filterDownloadable(storyObjs);
+		    	MyApplication.allMySnaps = Snap.filterDownloadable(MyApplication.snapchat.getSnaps());
 		        return "Executed";
 		    }
 
@@ -40,6 +42,9 @@ public class GetStoriesAsyncTask extends AsyncTask<String, Void, String> {
 		    	mystorysfrag.vidFiles=new File[MyApplication.stories.length];
 				mystorysfrag.addImagesToScreen();
 				MyApplication.friendsNames.add("My Story");
+				//save unread to gallery
+new SaveUnreadToGalleryTask().execute();
+				
 				for(Friend fr : MyApplication.myFriends){
 					
 					MyApplication.friendsNames.add(fr.getUsername());

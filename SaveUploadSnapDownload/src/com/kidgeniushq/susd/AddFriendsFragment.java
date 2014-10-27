@@ -81,7 +81,7 @@ public class AddFriendsFragment extends ListFragment {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result)
-				Toast.makeText(getActivity(), "Success!", Toast.LENGTH_SHORT)
+				Toast.makeText(getActivity(), "Added to friends!", Toast.LENGTH_SHORT)
 						.show();
 			else
 				Toast.makeText(getActivity(), "error!", Toast.LENGTH_SHORT)
