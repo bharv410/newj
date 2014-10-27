@@ -16,7 +16,6 @@ public class UploadFragment extends Fragment {
 	EditText captionEditText;
 	public UploadFragment() {
 	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

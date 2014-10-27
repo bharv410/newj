@@ -3,9 +3,11 @@ package com.kidgeniushq.susd;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -18,10 +20,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.kidgeniushq.susd.adapters.UserAdapter;
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 
-public class RecipientsActivity extends Activity {
+@TargetApi(Build.VERSION_CODES.HONEYCOMB) public class RecipientsActivity extends Activity {
 
 	public static final String TAG = RecipientsActivity.class.getSimpleName();
 	ArrayList<String> recipients;
@@ -36,6 +41,7 @@ public class RecipientsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.user_grid2);
+		((MyApplication) getApplication()).getTracker(MyApplication.TrackerName.APP_TRACKER);
 		Toast.makeText(getApplicationContext(), "Captions & filters coming soon!!!", Toast.LENGTH_LONG).show();
 
 		// ADS
@@ -57,6 +63,22 @@ public class RecipientsActivity extends Activity {
 		mMediaUri = getIntent().getData();
 		mFileType = getIntent().getExtras().getString("fileType");
 	}
+	@Override
+	public void onStart() { 
+        super.onStart(); 
+      //Get tracker.
+        com.google.android.gms.analytics.Tracker t = ((MyApplication) getApplication()).getTracker(
+         TrackerName.APP_TRACKER);
+
+        //Enable Advertising Features.
+        t.enableAdvertisingIdCollection(true);
+     // Set screen name.
+        //t.setScreenName(screenName);
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+
+    } 
 
 	@Override
 	public void onResume() {
@@ -81,23 +103,20 @@ public class RecipientsActivity extends Activity {
 	}
 
 	public void sendOut(View v) {
+		// Get tracker.
+        Tracker t = ((MyApplication)getApplication()).getTracker(
+            TrackerName.APP_TRACKER);
+        // Build and send an Event.
+        t.send(new HitBuilders.EventBuilder()
+            .setCategory("interaction")
+            .setAction("send snap")
+            .setLabel(" xxx ")
+            .build());
 
 		recipients = getRecipientIds();
 		// if(recipients.contains("My Story"))
 		// new UploadStoryAsyncTask().execute();
-
-		Toast.makeText(getApplicationContext(), recipients.get(0),
-				Toast.LENGTH_SHORT).show();
-		Toast.makeText(getApplicationContext(), recipients.get(1),
-				Toast.LENGTH_SHORT).show();
-		Toast.makeText(getApplicationContext(), recipients.get(2),
-				Toast.LENGTH_SHORT).show();
-		Toast.makeText(getApplicationContext(), recipients.get(3),
-				Toast.LENGTH_SHORT).show();
-		Toast.makeText(getApplicationContext(), recipients.get(4),
-				Toast.LENGTH_SHORT).show();
-		Toast.makeText(getApplicationContext(), recipients.get(5),
-				Toast.LENGTH_SHORT).show();
+new SendToFriendsAsyncTask().execute();
 	}
 
 	public class UploadStoryAsyncTask extends AsyncTask<String, Void, Boolean> {

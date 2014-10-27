@@ -36,24 +36,26 @@ public class AddFriendsFragment extends ListFragment {
 		populars.add("tacobell");
 		populars.add("mcdonalds");
 		populars.add("nba");
+		populars.add("boutmabenjamins");
 		adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, populars);
-		ParseQuery<ParseObject> query = ParseQuery
-				.getQuery("PopularSuggestions");
-		query.orderByDescending("createdAt");
-		FindCallback<ParseObject> fc =new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> scoreList, ParseException e) {
-				System.out.println("QUERYING  COMPLETE");
-				if (e == null) {
-					Log.d("score", "Retrieved " + scoreList.size() + " scores");
-					for (int i = 0; i < scoreList.size(); i++) {
-						populars.add(scoreList.get(i).getString("name"));
-					}setListAdapter(adapter);
-				}
-			}
-		};
-		query.findInBackground(fc);
+		setListAdapter(adapter);
+//		ParseQuery<ParseObject> query = ParseQuery
+//				.getQuery("PopularSuggestions");
+//		query.orderByDescending("createdAt");
+//		FindCallback<ParseObject> fc =new FindCallback<ParseObject>() {
+//			@Override
+//			public void done(List<ParseObject> scoreList, ParseException e) {
+//				System.out.println("QUERYING  COMPLETE");
+//				if (e == null) {
+//					Log.d("score", "Retrieved " + scoreList.size() + " scores");
+//					for (int i = 0; i < scoreList.size(); i++) {
+//						populars.add(scoreList.get(i).getString("name"));
+//					}setListAdapter(adapter);
+//				}
+//			}
+//		};
+//		query.findInBackground(fc);
 	}
 
 	@Override

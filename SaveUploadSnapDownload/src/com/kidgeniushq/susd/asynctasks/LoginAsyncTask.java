@@ -1,5 +1,9 @@
 package com.kidgeniushq.susd.asynctasks;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -37,6 +41,9 @@ String[] welcomeMessages;
     protected void onPostExecute(String result) {
     	progress.dismiss();    			
     	if(MyApplication.snapchat!=null){
+    		 //save username to file for auto login
+   		 saveToFile(MyApplication.username,MyApplication.password);
+   		 
     	GetStoriesAsyncTask gsat= new GetStoriesAsyncTask(context,activity);
     	gsat.execute();
     	}else
@@ -45,4 +52,21 @@ String[] welcomeMessages;
 
     @Override
     protected void onProgressUpdate(Void... values) {}
+    
+    public void saveToFile(String un, String pw) {
+		try {
+			FileWriter out = new FileWriter(new File(context
+					.getFilesDir(), "username.txt"));
+			out.write(un);
+			out.close();
+			
+			out = new FileWriter(new File(context
+					.getFilesDir(), "password.txt"));
+			out.write(pw);
+			out.close();
+			
+		} catch (IOException e) {
+			System.out.print(e);
+		}
+	}
 }

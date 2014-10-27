@@ -1,14 +1,14 @@
 package com.kidgeniushq.susd;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -31,6 +31,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -39,22 +40,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
 import com.kidgeniushq.susd.mainfragments.HelpFragment;
 import com.kidgeniushq.susd.mainfragments.UploadFragment;
-import com.kidgeniushq.susd.model.MyStory;
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
-import com.parse.FindCallback;
-import com.parse.GetDataCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.SaveCallback;
-import com.viewpagerindicator.TitlePageIndicator;
+import com.viewpagerindicator.LinePageIndicator;
 
 //icon by samuel green
 @TargetApi(Build.VERSION_CODES.HONEYCOMB) public class MainActivity extends FragmentActivity {
@@ -74,11 +70,13 @@ import com.viewpagerindicator.TitlePageIndicator;
 	public static final int FILE_SIZE_LIMIT = 1024*1024*10; // 10 MB
 	protected Uri mMediaUri;
 	protected DialogInterface.OnClickListener mDialogListener;
+	public Tracker t;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		t=((MyApplication) getApplication()).getTracker(MyApplication.TrackerName.APP_TRACKER);
 		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().hide();
@@ -86,23 +84,95 @@ import com.viewpagerindicator.TitlePageIndicator;
 		//this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		//getMyStories();
 		// alarm.setAlarm(getApplicationContext());		
-		login();
+		getNameAndPw();
 		
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setOffscreenPageLimit(4);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		 TitlePageIndicator titleIndicator = (TitlePageIndicator)findViewById(R.id.titles);
+		mViewPager.setOnPageChangeListener(new OnPageChangeListener(){
+			 
+            @Override
+            public void onPageScrollStateChanged(int position) {}
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {}
+            @Override
+            public void onPageSelected(int position) {
+            	// Get tracker.
+                Tracker t = ((MyApplication) getApplication()).getTracker(
+                    TrackerName.APP_TRACKER);
+                switch(position){
+                case 0:
+                    // Set screen name.
+                    t.setScreenName("feed");
+                    break;
+
+                case 1:
+                    // Set screen name.
+                    t.setScreenName("upload");
+                    break;
+                case 2:
+                	// Set screen name.
+                    t.setScreenName("help");
+                    break;
+                case 3:
+                    // Set screen name.
+                    t.setScreenName("popular");
+                    break;
+                }
+             // Send a screen view.
+                t.send(new HitBuilders.AppViewBuilder().build());
+            }
+
+        });
+
+		
+		LinePageIndicator titleIndicator = (LinePageIndicator)findViewById(R.id.indicator);
 		 titleIndicator.setViewPager(mViewPager);
 	}
+	public void getNameAndPw(){
+		String line;
+		BufferedReader in = null;
 
+		try {
+			in = new BufferedReader(new FileReader(new File(
+					getApplicationContext().getFilesDir(), "username.txt")));
+			while ((line = in.readLine()) != null) {
+				System.out.println(line);
+				MyApplication.username =line;
+			}
+			in.close();
+
+			in = new BufferedReader(new FileReader(new File(
+					getApplicationContext().getFilesDir(), "password.txt")));
+			while ((line = in.readLine()) != null) {
+				System.out.println(line);
+				MyApplication.password = line;
+			}
+			
+			 
+			 LoginAsyncTask lat = new LoginAsyncTask(
+			 getApplicationContext(), MainActivity.this);
+			 lat.execute(MyApplication.username, MyApplication.password);
+			 return;
+			 
+		} catch (FileNotFoundException e) {
+			System.out.println(e);
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+				
+		//if it makes it here then first login
+		login();
+	}
 	private void login() {
 //		MyApplication.username = "boutmabenjamins";
 //		MyApplication.password = "iforgot05";
 //		LoginAsyncTask lat = new LoginAsyncTask(getApplicationContext(),
 //				MainActivity.this);
 //		lat.execute(MyApplication.username, MyApplication.password);
-
+setupDialogListener();
 		 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 		
 		 alertDialog.setTitle("Login");
@@ -126,6 +196,9 @@ import com.viewpagerindicator.TitlePageIndicator;
 		 public void onClick(DialogInterface dialog, int id) {
 		 MyApplication.username = quantity.getText().toString();
 		 MyApplication.password = lot.getText().toString();
+		 
+		
+		 
 		 LoginAsyncTask lat = new LoginAsyncTask(
 		 getApplicationContext(), MainActivity.this);
 		 lat.execute(MyApplication.username, MyApplication.password);
@@ -134,6 +207,7 @@ import com.viewpagerindicator.TitlePageIndicator;
 		 AlertDialog alert = alertDialog.create();
 		 alert.show();
 	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -268,49 +342,49 @@ import com.viewpagerindicator.TitlePageIndicator;
 	}
 
 	
-	private void getMyStories() {
-		System.out.println("GETTING MY STORIES");
-		MyApplication.allMyStories = new ArrayList<MyStory>();
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("TestSnaps");
-		query.orderByDescending("createdAt");
-		query.setLimit(6);
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> scoreList, ParseException e) {
-				System.out.println("QUERYING TESTSNAPS COMPLETE");
-				if (e == null) {
-					Log.d("score", "Retrieved " + scoreList.size() + " scores");
-					for (int i=0;i< scoreList.size();i++) {
-						final ParseObject snap = scoreList
-								.get(i);
-						System.out.println("got SNAP WITH ID: "
-								+ snap.getString("snapid"));
-						MyApplication.allMyStories.add(new MyStory(snap
-								.getInt("viewcount"), snap.getString("snapid"),
-								snap.getString("date")));
-						ParseFile actualSnap = snap.getParseFile("story");
-						actualSnap.getDataInBackground(new GetDataCallback() {
-							public void done(byte[] data, ParseException e) {
-								System.out.println("QUERYING PHOTO COMPLETE");
-								if (e == null) {
-									// see mystory constructor
-									MyApplication.allMyStories.get(
-											MyApplication.addedImageToMyStory)
-											.setImageBytes(data);
-									MyApplication.addedImageToMyStory++;
-									System.out
-											.println("ADDED TO GLOBAL VARIABLE");
-								}
-							}
-						});
-					}
-					System.out.println("DONE");
-				} else {
-					System.out.println("error");
-				}
-			}
-		});
-	}
+//	private void getMyStories() {
+//		System.out.println("GETTING MY STORIES");
+//		MyApplication.allMyStories = new ArrayList<MyStory>();
+//		ParseQuery<ParseObject> query = ParseQuery.getQuery("TestSnaps");
+//		query.orderByDescending("createdAt");
+//		query.setLimit(6);
+//		query.findInBackground(new FindCallback<ParseObject>() {
+//			@Override
+//			public void done(List<ParseObject> scoreList, ParseException e) {
+//				System.out.println("QUERYING TESTSNAPS COMPLETE");
+//				if (e == null) {
+//					Log.d("score", "Retrieved " + scoreList.size() + " scores");
+//					for (int i=0;i< scoreList.size();i++) {
+//						final ParseObject snap = scoreList
+//								.get(i);
+//						System.out.println("got SNAP WITH ID: "
+//								+ snap.getString("snapid"));
+//						MyApplication.allMyStories.add(new MyStory(snap
+//								.getInt("viewcount"), snap.getString("snapid"),
+//								snap.getString("date")));
+//						ParseFile actualSnap = snap.getParseFile("story");
+//						actualSnap.getDataInBackground(new GetDataCallback() {
+//							public void done(byte[] data, ParseException e) {
+//								System.out.println("QUERYING PHOTO COMPLETE");
+//								if (e == null) {
+//									// see mystory constructor
+//									MyApplication.allMyStories.get(
+//											MyApplication.addedImageToMyStory)
+//											.setImageBytes(data);
+//									MyApplication.addedImageToMyStory++;
+//									System.out
+//											.println("ADDED TO GLOBAL VARIABLE");
+//								}
+//							}
+//						});
+//					}
+//					System.out.println("DONE");
+//				} else {
+//					System.out.println("error");
+//				}
+//			}
+//		});
+//	}
 
 	public void sendItOut(View v) {
 		ImageView imageViewForChosenPic = (ImageView) findViewById(R.id.uploadImageView);
@@ -456,17 +530,18 @@ import com.viewpagerindicator.TitlePageIndicator;
 		}
 	}
 	public void saveToParse(View v){
-		final ParseObject testObject = new ParseObject("PopularSuggestions");
-		testObject.put("name", ((EditText)findViewById(R.id.addFriendEditText)).getText().toString());
-		testObject.saveInBackground(new SaveCallback(){
-
-			@Override
-			public void done(ParseException arg0) {
-				Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_SHORT);
-				
-			}
-			
-		});
+//		final ParseObject testObject = new ParseObject("PopularSuggestions");
+//		testObject.put("name", ((EditText)findViewById(R.id.addFriendEditText)).getText().toString());
+//		testObject.saveInBackground(new SaveCallback(){
+//
+//			@Override
+//			public void done(ParseException arg0) {
+//				
+//				
+//			}
+//			
+//		});
+		Toast.makeText(getApplicationContext(), "Under review!", Toast.LENGTH_SHORT).show();
 	}
 	public void giveError(View v){
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(

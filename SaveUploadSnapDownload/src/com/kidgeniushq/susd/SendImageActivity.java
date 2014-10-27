@@ -34,8 +34,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.kidgeniushq.susd.customui.NotSwipeableViewPager;
+import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.Utility;
+import com.kidgeniushq.susd.utility.MyApplication.TrackerName;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB) public class SendImageActivity extends FragmentActivity {
 
@@ -49,6 +52,7 @@ import com.kidgeniushq.susd.utility.Utility;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_send_image);
+		((MyApplication) getApplication()).getTracker(MyApplication.TrackerName.APP_TRACKER);
 getActionBar().hide();
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
@@ -62,7 +66,22 @@ getActionBar().hide();
 				1);
 
 	}
-	
+	@Override
+	public void onStart() { 
+        super.onStart(); 
+      //Get tracker.
+        com.google.android.gms.analytics.Tracker t = ((MyApplication) getApplication()).getTracker(
+         TrackerName.APP_TRACKER);
+
+        //Enable Advertising Features.
+        t.enableAdvertisingIdCollection(true);
+     // Set screen name.
+        //t.setScreenName(screenName);
+
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+
+    } 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
