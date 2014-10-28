@@ -49,7 +49,7 @@ import com.kidgeniushq.susd.utility.Utility;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_send_image);
-getActionBar().hide();
+		getActionBar().hide();
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 		mViewPager = (NotSwipeableViewPager) findViewById(R.id.pager);

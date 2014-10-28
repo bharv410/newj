@@ -105,6 +105,7 @@ new SendToFriendsAsyncTask().execute();
 						"Succesfully Uploaded to Story", Toast.LENGTH_SHORT);
 				tst.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
 				tst.show();
+				finish();
 			} else {
 				Toast tst = Toast
 						.makeText(

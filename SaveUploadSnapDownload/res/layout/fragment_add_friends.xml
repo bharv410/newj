@@ -5,9 +5,9 @@
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="356dp"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/layoutz"
-        android:layout_alignParentTop="true" >
+        android:layout_below="@+id/textView1ititle" >
 
     </ListView>
 
@@ -34,8 +34,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="saveToParse"
             android:text="add" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView1ititle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Click users to add as friends!"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

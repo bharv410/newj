@@ -37,7 +37,7 @@ public class MyApplication extends Application {
 		super.onCreate();
 		addedImageToMyStory=0;
 		friendsNames= new ArrayList<String>();
-		Parse.initialize(this, "ueSahQADdPbW6NrOur4ySHyGkUbVpdeCyvOqS5MP", "KBJ0uWzC4OgeMi7GyPZVWJvT1wwyMEbdLK2AGK6C");
+		Parse.initialize(this, "NSi9jWGJWQnWljIOtGjOXtvPpKIwefhpVdq9SlOb", "LOPmGbcEfYol9Gl5zjVJShBrJb03qmKAVWRtX2i1");
 		// Create global configuration and initialize ImageLoader with this config
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
         ImageLoader.getInstance().init(config);

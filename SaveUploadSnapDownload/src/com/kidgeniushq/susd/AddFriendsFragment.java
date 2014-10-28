@@ -1,12 +1,10 @@
 package com.kidgeniushq.susd;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +13,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
 public class AddFriendsFragment extends ListFragment {
 	ArrayList<String> populars;
@@ -29,14 +23,40 @@ public class AddFriendsFragment extends ListFragment {
 		super.onActivityCreated(savedInstanceState);
 		populars = new ArrayList<String>();
 		populars.add("VSpink");
+		populars.add("Katyperry");
+		populars.add("mileyxxcyrus");
 		populars.add("RyanSeacrest");
+		populars.add("canadiangoose");
+		populars.add("kimkardash");
+		populars.add("badgalrihanna");
+		populars.add("h.estyles");
+		populars.add("areanuh");
+		populars.add("JGL1981");
+		populars.add("boutmabenjamins");
+		populars.add("meekmillyMMG");
+		populars.add("GreeneyGirl");
+		populars.add("LivelyBK");
+		populars.add("leto30s2m");
+		populars.add("kendalljenner");
+		populars.add("Chamclouder");
+		populars.add("wesandkeats");
+		populars.add("kumbayachadwick");
+		populars.add("jmillermusic");
+		populars.add("imchristianlnrd");
+		populars.add("craejepsen");
+		populars.add("camerondallaaas");
+		populars.add("loganpaul");
+		populars.add("zacefron87");
+		populars.add("themrwest");
+		populars.add("ChrisMBrown89");
+		populars.add("R.Patterson86");
+		populars.add("JackReynor");
 		populars.add("mtv");
 		populars.add("easports");
 		populars.add("grubhub");
 		populars.add("tacobell");
 		populars.add("mcdonalds");
 		populars.add("nba");
-		populars.add("boutmabenjamins");
 		adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, populars);
 		setListAdapter(adapter);
@@ -61,7 +81,7 @@ public class AddFriendsFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_add_friends,
+		View rootView = inflater.inflate(R.layout.add_popular_fragment,
 				container, false);
 		return rootView;
 	}

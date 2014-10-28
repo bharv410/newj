@@ -18,25 +18,13 @@
          />
 
     <Button
-        android:id="@+id/errorsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/middleView1"
-        android:gravity="center"
-        android:onClick="giveError"
-        android:text="Report error" />
-
-    <Button
         android:id="@+id/feedbackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/middleView1"
         android:gravity="center"
         android:onClick="giveFeedback"
         android:text="Give suggestions" />

@@ -422,8 +422,8 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int vpi__tab_unselected_pressed_holo=0x7f020009;
     }
     public static final class id {
-        public static final int addButton=0x7f050010;
-        public static final int addFriendEditText=0x7f05000f;
+        public static final int addButton=0x7f050011;
+        public static final int addFriendEditText=0x7f050010;
         public static final int bigImageView=0x7f050006;
         public static final int bigVideoView=0x7f05000b;
         public static final int bottom=0x7f050003;
@@ -431,12 +431,11 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int button2=0x7f050018;
         public static final int button3=0x7f05001a;
         public static final int button4=0x7f05001b;
-        public static final int checkBox1=0x7f05000c;
+        public static final int checkBox1=0x7f05000d;
         public static final int checkImageView=0x7f05002b;
         public static final int choosePicButton=0x7f050021;
         public static final int chooseVidButton=0x7f050020;
-        public static final int code=0x7f05000d;
-        public static final int errorsButton=0x7f050013;
+        public static final int code=0x7f05000e;
         public static final int feedbackButton=0x7f050014;
         public static final int findSelected=0x7f05001e;
         public static final int friendsGrid=0x7f050029;
@@ -446,9 +445,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int gridview=0x7f050007;
         public static final int imageCaptionEditText=0x7f050019;
         public static final int indicator=0x7f050009;
-        public static final int layoutz=0x7f05000e;
+        public static final int layoutz=0x7f05000f;
         public static final int messageIcon=0x7f050026;
-        public static final int middleView1=0x7f050012;
+        public static final int middleView1=0x7f050013;
         public static final int nameLabel=0x7f05002c;
         public static final int none=0x7f050000;
         public static final int pager=0x7f050008;
@@ -461,12 +460,13 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int senderLabel=0x7f050027;
         public static final int text=0x7f050025;
         public static final int textView1=0x7f050017;
+        public static final int textView1ititle=0x7f05000c;
         public static final int time=0x7f05001d;
         public static final int timeLabel=0x7f050028;
         public static final int top=0x7f050004;
         public static final int triangle=0x7f050001;
         public static final int underline=0x7f050002;
-        public static final int uploadImageView=0x7f050011;
+        public static final int uploadImageView=0x7f050012;
     }
     public static final class integer {
         public static final int default_circle_indicator_orientation=0x7f080000;
@@ -481,18 +481,19 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int activity_main=0x7f030002;
         public static final int activity_send_image=0x7f030003;
         public static final int activity_video_view=0x7f030004;
-        public static final int checkbox_listitem=0x7f030005;
-        public static final int fragment_add_friends=0x7f030006;
-        public static final int fragment_contact=0x7f030007;
-        public static final int fragment_main=0x7f030008;
-        public static final int fragment_send_image=0x7f030009;
-        public static final int fragment_sendtofriends=0x7f03000a;
-        public static final int fragment_upload=0x7f03000b;
-        public static final int grid_single=0x7f03000c;
-        public static final int gridview_item=0x7f03000d;
-        public static final int message_item=0x7f03000e;
-        public static final int user_grid2=0x7f03000f;
-        public static final int user_item=0x7f030010;
+        public static final int add_popular_fragment=0x7f030005;
+        public static final int checkbox_listitem=0x7f030006;
+        public static final int fragment_add_friends=0x7f030007;
+        public static final int fragment_contact=0x7f030008;
+        public static final int fragment_main=0x7f030009;
+        public static final int fragment_send_image=0x7f03000a;
+        public static final int fragment_sendtofriends=0x7f03000b;
+        public static final int fragment_upload=0x7f03000c;
+        public static final int grid_single=0x7f03000d;
+        public static final int gridview_item=0x7f03000e;
+        public static final int message_item=0x7f03000f;
+        public static final int user_grid2=0x7f030010;
+        public static final int user_item=0x7f030011;
     }
     public static final class string {
         public static final int action_settings=0x7f0b0006;
