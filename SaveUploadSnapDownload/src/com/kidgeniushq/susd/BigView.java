@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -23,6 +26,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB) public class BigView extends Activity {
 	ImageView iv;
@@ -31,7 +35,7 @@ import com.kidgeniushq.susd.utility.MyApplication;
 	FileOutputStream fileOutputStream;
 	File file1;
 	Bitmap bm;
-
+	MixpanelAPI mMixpanel;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,6 +44,19 @@ import com.kidgeniushq.susd.utility.MyApplication;
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().hide();
 		} 
+		
+		mMixpanel =
+			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
+		JSONObject props = new JSONObject();
+		try {
+
+		props.put("username", MyApplication.username);
+			props.put("whosstory", MyApplication.currentStory.getSender());
+			mMixpanel.track("Opened Image", props);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
 		
 		
 		iv = (ImageView) findViewById(R.id.bigImageView);

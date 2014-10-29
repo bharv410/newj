@@ -3,6 +3,9 @@ package com.kidgeniushq.susd;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -18,6 +21,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -27,16 +31,20 @@ import com.parse.SaveCallback;
 public class AddEachOtherFragment extends ListFragment {
 	ArrayList<String> people;
 	ArrayAdapter<String> adapter;
-
+	MixpanelAPI mMixpanel;
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		mMixpanel=
+				MixpanelAPI.getInstance(getActivity().getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
 		people = new ArrayList<String>();
 		people.add("kwazs");
 		people.add("boutmabenjamins");
 		adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, people);
 		setListAdapter(adapter);
+		
+		
 		ParseQuery<ParseObject> query = ParseQuery
 				.getQuery("PopularSuggestions");
 		query.orderByDescending("createdAt");
@@ -93,6 +101,14 @@ public class AddEachOtherFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
+		JSONObject props = new JSONObject();
+		try {
+			props.put("added friend", people.get(position));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		mMixpanel.track("AddedFriend", props);
 		new AddFriendTask().execute(people.get(position));
 
 	}

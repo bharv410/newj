@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -20,9 +23,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB) public class VideoViewActivity extends Activity {
 	private VideoView myVideoView;
@@ -33,12 +38,24 @@ import com.kidgeniushq.susd.utility.MyApplication;
 
 	private MediaController mediaControls;
 	File vidFile;
+	MixpanelAPI mMixPanel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_video_view);
 		getActionBar().hide();
+		mMixPanel =
+			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
+		JSONObject props = new JSONObject();
+		try {
+
+		props.put("username", MyApplication.username);
+			props.put("whosstory", MyApplication.currentStory.getSender());
+			mMixPanel.track("Opened Video", props);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		if (mediaControls == null) {
 			mediaControls = new MediaController(VideoViewActivity.this);
 		}
@@ -140,5 +157,6 @@ import com.kidgeniushq.susd.utility.MyApplication;
         } 
 
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+        Toast.makeText(getApplicationContext(), "Saved to folder dir2!", Toast.LENGTH_SHORT).show();
 	}
 }

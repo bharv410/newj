@@ -28,6 +28,7 @@ public class MyApplication extends Application {
 		public static boolean requestInProgress = false;//so we don't load too much at once
 		public static List<Bitmap> imageList;
 		public static int addedImageToMyStory;
+		public static String regId;
 		public static Friend[] myFriends;
 		public static ArrayList<String> friendsNames;
 		public static int vidIndex;//fixes bug for vids

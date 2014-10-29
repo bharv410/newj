@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.habosa.javasnap.Snapchat;
+import com.kidgeniushq.susd.MainActivity;
 import com.kidgeniushq.susd.utility.MyApplication;
 
 public class LoginAsyncTask extends AsyncTask<String, Void, String> {
@@ -46,8 +47,11 @@ String[] welcomeMessages;
    		 
     	GetStoriesAsyncTask gsat= new GetStoriesAsyncTask(context,activity);
     	gsat.execute();
-    	}else
+    	
+    	}else{
     		Toast.makeText(context, "wrong username or passwoord", Toast.LENGTH_SHORT).show();
+    	((MainActivity)activity).login();
+    	}
     }    
 
     @Override

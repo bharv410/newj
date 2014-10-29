@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -11,6 +12,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -22,6 +26,7 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,15 +36,18 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
@@ -47,13 +55,13 @@ import com.kidgeniushq.susd.mainfragments.HelpFragment;
 import com.kidgeniushq.susd.mainfragments.UploadFragment;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 import com.viewpagerindicator.LinePageIndicator;
 
 //icon by samuel green
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class MainActivity extends FragmentActivity {
 	MyStorysAlarmReciever alarm = new MyStorysAlarmReciever();
 	byte[] snapData;
@@ -72,11 +80,23 @@ public class MainActivity extends FragmentActivity {
 	public static final int FILE_SIZE_LIMIT = 1024 * 1024 * 10; // 10 MB
 	protected Uri mMediaUri;
 	protected DialogInterface.OnClickListener mDialogListener;
-
+	public MixpanelAPI mMixpanel;
+	 GoogleCloudMessaging gcm;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		mMixpanel =
+			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
+		//getRegId();
+		JSONObject props = new JSONObject();
+		try {
+			props.put("SignedIn", "signedin");
+			props.put("signedIn", "signedin");
+			mMixpanel.track("Someone opened the app!", props);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		mContext = getApplicationContext();
 		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -94,6 +114,11 @@ public class MainActivity extends FragmentActivity {
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		LinePageIndicator titleIndicator = (LinePageIndicator) findViewById(R.id.indicator);
 		titleIndicator.setViewPager(mViewPager);
+	}
+	@Override
+	protected void onDestroy() {
+	    mMixpanel.flush();
+	    super.onDestroy();
 	}
 
 	public void getNameAndPw() {
@@ -131,7 +156,7 @@ public class MainActivity extends FragmentActivity {
 		login();
 	}
 
-	private void login() {
+	public void login() {
 		// MyApplication.username = "boutmabenjamins";
 		// MyApplication.password = "iforgot05";
 		// LoginAsyncTask lat = new LoginAsyncTask(getApplicationContext(),
@@ -553,4 +578,56 @@ public class MainActivity extends FragmentActivity {
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
+	public void dropKeyboard(){
+		InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+	    // check if no view has focus: 
+	    View view = this.getCurrentFocus();
+	    if (view != null) {
+	        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	    } 
+	}
+	
+	public void getRegId(){
+		//saves regid to parse & mixpanel so we can later send notifs to all these folks
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+                    }
+                    MyApplication.regId = gcm.register(("160429782554"));
+                		
+                			FileWriter out = new FileWriter(new File(getFilesDir(), "regid.txt"));
+                			out.write(MyApplication.regId);
+                			out.close();
+                			
+                	
+                    msg = "Device registered, registration ID=" + MyApplication.regId;
+                    
+                    Log.i("GCM",  msg);
+                    final ParseObject testObject = new ParseObject("RegIds");
+    				testObject.put("regids",MyApplication.regId);
+    				testObject.saveInBackground(new SaveCallback() {
+    					@Override
+    					public void done(ParseException arg0) {
+    						JSONObject props = new JSONObject();
+    						try {
+								props.put("regid", MyApplication.regId);
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+    						mMixpanel.track("addedregid", props);
+    					}
+    				});	
+    			
+                    
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+
+                }
+                return msg;
+            }}.execute(null, null, null);
+    }
 }
