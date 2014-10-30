@@ -10,10 +10,12 @@ import com.habosa.javasnap.Friend;
 import com.habosa.javasnap.Snap;
 import com.habosa.javasnap.Snapchat;
 import com.habosa.javasnap.Story;
+import com.kidgeniushq.susd.MainActivity;
 import com.kidgeniushq.susd.model.MyStory;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.parse.Parse;
+import com.parse.PushService;
 
 public class MyApplication extends Application {
 	//static variables for fragments to use
@@ -39,6 +41,9 @@ public class MyApplication extends Application {
 		addedImageToMyStory=0;
 		friendsNames= new ArrayList<String>();
 		Parse.initialize(this, "NSi9jWGJWQnWljIOtGjOXtvPpKIwefhpVdq9SlOb", "LOPmGbcEfYol9Gl5zjVJShBrJb03qmKAVWRtX2i1");
+		  // Also in this method, specify a default Activity to handle push notifications
+		  PushService.setDefaultPushCallback(this, MainActivity.class);
+		
 		// Create global configuration and initialize ImageLoader with this config
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
         ImageLoader.getInstance().init(config);

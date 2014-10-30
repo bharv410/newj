@@ -7,7 +7,6 @@ import java.util.Calendar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,7 +14,6 @@ import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -28,7 +26,7 @@ import android.widget.ImageView;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB) public class BigView extends Activity {
+public class BigView extends Activity {
 	ImageView iv;
 	File imageFileFolder, imageFileName;
 	MediaScannerConnection msConn;
@@ -127,10 +125,19 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 					}
 				});
 		msConn.connect();
+		
 		finish();
 	}
 
 	public void save(View v) {
 		savePhoto(MyApplication.currentBitmap);
+		
+		JSONObject props = new JSONObject();
+		try {
+			props.put("SignedIn", "signedin");
+			mMixpanel.track("Saved image!", props);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 }

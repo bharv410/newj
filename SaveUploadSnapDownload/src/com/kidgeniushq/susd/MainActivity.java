@@ -57,7 +57,9 @@ import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.SaveCallback;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -86,6 +88,18 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		// Save the current Installation to Parse.
+		ParseInstallation.getCurrentInstallation().saveInBackground();
+		ParsePush.subscribeInBackground("", new SaveCallback() {
+			  @Override
+			  public void done(ParseException e) {
+			    if (e != null) {
+			      Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+			    } else {
+			      Log.e("com.parse.push", "failed to subscribe for push", e);
+			    }
+			  }
+			});
 		mMixpanel =
 			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
 		//getRegId();

@@ -44,7 +44,7 @@ String[] welcomeMessages;
     	if(MyApplication.snapchat!=null){
     		 //save username to file for auto login
    		 saveToFile(MyApplication.username,MyApplication.password);
-   		 
+   		 ((MainActivity)activity).dropKeyboard();
     	GetStoriesAsyncTask gsat= new GetStoriesAsyncTask(context,activity);
     	gsat.execute();
     	

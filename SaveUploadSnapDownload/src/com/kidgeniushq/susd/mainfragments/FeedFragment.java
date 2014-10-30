@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -181,9 +182,7 @@ public class FeedFragment extends Fragment {
 			            	Intent i=new Intent(getActivity(),VideoViewActivity.class);
 			            	MyApplication.vidIndex=position;
 			            	startActivity(i);
-			            }
-			            	
-			            	
+			            }   	
 			        }
 			    });
 				MyApplication.imageList.add(bitmap);
@@ -191,6 +190,8 @@ public class FeedFragment extends Fragment {
 						getActivity());
 				gv.setAdapter(sa);
 				gv.setOnScrollListener(new GVOnScrollListener());
+				getActivity().getWindow().setSoftInputMode( 
+					      WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 			}else{
 				MyApplication.imageList.add(bitmap);
 				sa.notifyDataSetInvalidated();

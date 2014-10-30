@@ -68,6 +68,12 @@ public class AddEachOtherFragment extends ListFragment {
 
 			@Override
 			public void onClick(View arg0) {
+				
+				
+				if(((EditText)getActivity().findViewById(R.id.addFriendEditText)).getText().toString().equals("") || ((EditText)getActivity().findViewById(R.id.addFriendEditText)).getText()==null){
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Enter your username for other people to see", Toast.LENGTH_SHORT).show();
+				}else{
 				final ParseObject testObject = new ParseObject("PopularSuggestions");
 				testObject.put("name",
 						((EditText) getActivity().findViewById(R.id.addFriendEditText)).getText()
@@ -87,6 +93,7 @@ public class AddEachOtherFragment extends ListFragment {
 						}
 					}
 				});	
+			}
 			}
 		});
 	}

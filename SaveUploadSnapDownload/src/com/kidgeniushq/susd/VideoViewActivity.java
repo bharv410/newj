@@ -130,6 +130,14 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 	}
 	
 	public void save(View v){
+		
+		JSONObject props = new JSONObject();
+		try {
+			props.put("SignedIn", "signedin");
+			mMixPanel.track("Saved video!", props);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		String title=MyApplication.currentStory.getSender()+MyApplication.currentStory.getCaption();
 		
 		// Save the name and description of a video in a ContentValues map.  
