@@ -1,14 +1,22 @@
 package com.kidgeniushq.susd;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -23,7 +31,8 @@ import android.widget.Toast;
 import com.kidgeniushq.susd.adapters.UserAdapter;
 import com.kidgeniushq.susd.utility.MyApplication;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB) public class RecipientsActivity extends Activity {
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+public class RecipientsActivity extends Activity {
 
 	public static final String TAG = RecipientsActivity.class.getSimpleName();
 	ArrayList<String> recipients;
@@ -38,7 +47,6 @@ import com.kidgeniushq.susd.utility.MyApplication;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.user_grid2);
-		Toast.makeText(getApplicationContext(), "Captions & filters coming soon!!!", Toast.LENGTH_LONG).show();
 
 		// ADS
 		// Resources res = getResources();
@@ -59,6 +67,7 @@ import com.kidgeniushq.susd.utility.MyApplication;
 		mMediaUri = getIntent().getData();
 		mFileType = getIntent().getExtras().getString("fileType");
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -82,65 +91,46 @@ import com.kidgeniushq.susd.utility.MyApplication;
 	}
 
 	public void sendOut(View v) {
-		recipients = getRecipientIds();
-		// if(recipients.contains("My Story"))
-		// new UploadStoryAsyncTask().execute();
-new SendToFriendsAsyncTask().execute();
-	}
-
-	public class UploadStoryAsyncTask extends AsyncTask<String, Void, Boolean> {
-		@Override
-		protected Boolean doInBackground(String... params) {
-			boolean video = (getIntent().getStringExtra("fileType")
-					.contains(".mp4"));
-			boolean result = MyApplication.snapchat.sendStory(new File(
-					mMediaUri.getPath()), video, 8, "");
-			return result;
+			recipients = getRecipientIds();
+			// if(recipients.contains("My Story"))
+			// new UploadStoryAsyncTask().execute();
+			new SendToFriendsAsyncTask().execute();
 		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if (result) {
-				Toast tst = Toast.makeText(getApplicationContext(),
-						"Succesfully Uploaded to Story", Toast.LENGTH_SHORT);
-				tst.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
-				tst.show();
-				finish();
-			} else {
-				Toast tst = Toast
-						.makeText(
-								getApplicationContext(),
-								"Sorry. .JPG files don't work at the momeny. Use a .PNG file",
-								Toast.LENGTH_SHORT);
-				tst.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
-				tst.show();
-			}
-		}
-	}
-
 	public class SendToFriendsAsyncTask extends
 			AsyncTask<String, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			boolean story;
-			if(recipients.contains("My Story")){
+			if (recipients.contains("My Story")) {
 				recipients.remove(0);
-				story=true;
-			}else{
-				story=false;
+				story = true;
+			} else {
+				story = false;
 			}
+
 			boolean video = (getIntent().getStringExtra("fileType")
 					.contains(".mp4"));
-			return MyApplication.snapchat.sendSnap(new File(mMediaUri.getPath()), recipients, video, story,10);
+
+			if (SendImageActivity.currentImageFile != null) {
+				return MyApplication.snapchat.sendSnap(
+						SendImageActivity.currentImageFile, recipients, video,
+						story, 10);
+			} else {
+				return MyApplication.snapchat.sendSnap(
+						new File(mMediaUri.getPath()), recipients, video,
+						story, 10);
+			}
+
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			if (result) {
-				Toast tst = Toast.makeText(getApplicationContext(),
-						"Succesfully Uploaded to Story", Toast.LENGTH_SHORT);
+				Toast tst = Toast.makeText(getApplicationContext(), "Sent",
+						Toast.LENGTH_SHORT);
 				tst.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
 				tst.show();
+				finish();
 			} else {
 				Toast tst = Toast
 						.makeText(
@@ -170,5 +160,5 @@ new SendToFriendsAsyncTask().execute();
 			}
 		}
 	};
-
+	
 }

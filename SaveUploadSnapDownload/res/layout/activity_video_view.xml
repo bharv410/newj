@@ -24,4 +24,13 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true" />
 
+    <Button
+        android:id="@+id/repostButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/saveVideoButton"
+        android:layout_alignParentLeft="true"
+        android:onClick="repost"
+        android:text="REPOST!" />
+
 </RelativeLayout>

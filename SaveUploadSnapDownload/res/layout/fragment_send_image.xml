@@ -58,11 +58,7 @@
         android:layout_alignBottom="@+id/uploadImageView"
         android:layout_alignParentLeft="true"
         android:layout_alignRight="@+id/button1"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
-
+        android:ems="10" />
     <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"

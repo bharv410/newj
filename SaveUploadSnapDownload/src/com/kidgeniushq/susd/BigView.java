@@ -2,18 +2,26 @@ package com.kidgeniushq.susd;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Calendar;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -22,6 +30,7 @@ import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -32,7 +41,6 @@ public class BigView extends Activity {
 	MediaScannerConnection msConn;
 	FileOutputStream fileOutputStream;
 	File file1;
-	Bitmap bm;
 	MixpanelAPI mMixpanel;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,18 +95,95 @@ public class BigView extends Activity {
 			e.printStackTrace();
 		}
 	}
+	public void repost(View v){		
+		JSONObject props = new JSONObject();
+		try {
+			props.put("SignedIn", "signedin");
+			mMixpanel.track("Reposted image!", props);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				BigView.this);
+				alertDialogBuilder.setTitle("Just one thing!");
+				alertDialogBuilder
+						.setMessage(
+								"All you must do is shout us out on Twitter ONCE to repost photos forever (videos always work)")
+						.setCancelable(false)
+						.setPositiveButton("Okay! I'll do it now!",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int id) {
+										tweetItOut();
+									}
+								})
+						.setNegativeButton(
+								"No thanks. I don't want to easily save photos",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int id) {
+										dialog.cancel();
+									}
+								});
 
-	public Uri addImageToGallery(Context context, String filepath,
-			String title, String description) {
-		ContentValues values = new ContentValues();
-		values.put(Media.TITLE, title);
-		values.put(Media.DESCRIPTION, description);
-		values.put(Images.Media.DATE_TAKEN, System.currentTimeMillis());
-		values.put(Images.Media.MIME_TYPE, "image/jpeg");
-		values.put(MediaStore.MediaColumns.DATA, filepath);
-		return context.getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,
-				values);
+				AlertDialog alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
+		
 	}
+	public void tweetItOut(){
+		// Create intent using ACTION_VIEW and a normal Twitter url:
+		String tweetUrl = 
+		    String.format("https://twitter.com/intent/tweet?text=%s&url=%s",
+		        urlEncode("SAVE SNAPCHATS ANDROID APP: "), urlEncode("http://bit.ly/1yI9QXe"));
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(tweetUrl));
+
+		// Narrow down to official Twitter app, if available:
+		List<ResolveInfo> matches = getPackageManager().queryIntentActivities(intent, 0);
+		for (ResolveInfo info : matches) {
+		    if (info.activityInfo.packageName.toLowerCase().startsWith("com.twitter")) {
+		        intent.setPackage(info.activityInfo.packageName);
+		    }
+		}
+		startActivity(intent);
+		}
+		public static String urlEncode(String s) {
+		    try {
+		        return URLEncoder.encode(s, "UTF-8");
+		    }
+		    catch (UnsupportedEncodingException e) {
+		        Log.wtf("URLEncoder", "UTF-8 should always be supported", e);
+		        throw new RuntimeException("URLEncoder.encode() failed for " + s);
+		    }
+		}
+private class RepostAsyncTask extends AsyncTask<String, Void, Boolean> {
+		
+		@Override
+		protected Boolean doInBackground(String... params) {
+			boolean result = MyApplication.snapchat.sendStory(imageFileName, false, 5, "");
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if(result){
+				Toast.makeText(getApplicationContext(), "Uploaded to your snapchat story!!", Toast.LENGTH_LONG).show();
+				JSONObject props = new JSONObject();
+				try {
+
+				props.put("username", MyApplication.username);
+					props.put("whosstory", MyApplication.currentStory.getSender());
+					mMixpanel.track("Reposted!", props);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}else{
+				Toast.makeText(getApplicationContext(), "Error reposting ;/", Toast.LENGTH_LONG).show();
+
+			}
+				
+		}
+	}
+	
 
 	@Override
 	public void onBackPressed() {

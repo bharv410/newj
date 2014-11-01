@@ -1,6 +1,9 @@
 package com.kidgeniushq.susd.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +18,11 @@ import com.kidgeniushq.susd.utility.Utility;
 public class MyStoryAdapter extends BaseAdapter {
 
     private Context mContext;
+    private Activity mActivity;
 
-    public MyStoryAdapter(Context c) {
+    public MyStoryAdapter(Context c, Activity act) {
         mContext = c;
+        mActivity=act;
     }
 
     @Override
@@ -27,12 +32,12 @@ public class MyStoryAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int arg0) {
-        return null;
+    	return MyApplication.allMyStories.get(arg0);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return ((long)MyApplication.allMyStories.get(position).hashCode());
     }
     @Override
 	public View getView(int i, View view, ViewGroup viewGroup) {
@@ -50,7 +55,14 @@ public class MyStoryAdapter extends BaseAdapter {
 			picture = (ImageView) v.getTag(R.id.picture);
 			name = (TextView) v.getTag(R.id.text);
 			name.setText(MyApplication.allMyStories.get(i).toString());
-			picture.setImageBitmap(Utility.getPhoto(MyApplication.allMyStories.get(i).getData()));
+			
+			DisplayMetrics dimension = new DisplayMetrics();
+			mActivity.getWindowManager().getDefaultDisplay()
+					.getMetrics(dimension);
+			int width = dimension.widthPixels;
+			
+			picture.setImageBitmap(Bitmap.createScaledBitmap(Utility.getPhoto(
+					MyApplication.allMyStories.get(i).getData()), width / 2, 3 * width / 4, true));
 			System.out.println("Adding mystory");
 
 			return v;

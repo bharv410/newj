@@ -22,7 +22,7 @@ public class MyStoryGridFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_feed, container, false);
+        View view = inflater.inflate(R.layout.fragment_allmystories, container, false);
         if(MyApplication.allMyStories!=null){
         	if(MyApplication.allMyStories.size()>0){
         		setStoryAdapter();
@@ -42,8 +42,8 @@ public class MyStoryGridFragment extends Fragment {
     }
 		
     public void setStoryAdapter(){
-    	gridView = (GridView) getActivity().findViewById(R.id.gridview);
-    	mAdapter=new MyStoryAdapter(getActivity().getApplicationContext());
+    	gridView = (GridView) getActivity().findViewById(R.id.gridview2);
+    	mAdapter=new MyStoryAdapter(getActivity().getApplicationContext(),getActivity());
         gridView.setAdapter(mAdapter);
     }
     public void refreshGridView(){

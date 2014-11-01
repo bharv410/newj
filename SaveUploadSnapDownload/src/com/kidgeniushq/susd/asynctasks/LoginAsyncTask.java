@@ -12,7 +12,11 @@ import android.widget.Toast;
 
 import com.habosa.javasnap.Snapchat;
 import com.kidgeniushq.susd.MainActivity;
+import com.kidgeniushq.susd.R;
+import com.kidgeniushq.susd.mainfragments.FeedFragment;
+import com.kidgeniushq.susd.mainfragments.MyStoryGridFragment;
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
 
 public class LoginAsyncTask extends AsyncTask<String, Void, String> {
 Context context;
@@ -47,6 +51,15 @@ String[] welcomeMessages;
    		 ((MainActivity)activity).dropKeyboard();
     	GetStoriesAsyncTask gsat= new GetStoriesAsyncTask(context,activity);
     	gsat.execute();
+    	
+    	//save storys everyda
+    	MyStorysAlarmReciever alarm = new MyStorysAlarmReciever();
+    	alarm.setAlarm(context);
+    	
+    	//set mystorysgrid photos
+    	MyStoryGridFragment mystorysfrag = (MyStoryGridFragment)((MainActivity)activity).getSupportFragmentManager().findFragmentByTag(
+                "android:switcher:"+R.id.pager+":3");
+    	mystorysfrag.setStoryAdapter();
     	
     	}else{
     		Toast.makeText(context, "wrong username or passwoord", Toast.LENGTH_SHORT).show();

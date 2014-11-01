@@ -21,6 +21,8 @@ public class MyStorysAlarmReciever extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intnt) {
 		 Intent service = new Intent(context, MyStoryGrabberService.class);
+		 service.putExtra("un", MyApplication.username);
+		 service.putExtra("pw", MyApplication.password);
 	        context.startService(service);
 		
 	}
@@ -32,8 +34,8 @@ public class MyStorysAlarmReciever extends BroadcastReceiver{
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         // Set the alarm's trigger time to 8:30 a.m.
-        calendar.set(Calendar.HOUR_OF_DAY, 15);
-        calendar.set(Calendar.MINUTE, 24);
+        calendar.set(Calendar.HOUR_OF_DAY, 14);
+        calendar.set(Calendar.MINUTE, 25);
   
               
         // Set the alarm to fire at approximately 8:30 a.m., according to the device's

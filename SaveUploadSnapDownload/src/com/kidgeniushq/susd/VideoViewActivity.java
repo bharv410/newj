@@ -8,15 +8,15 @@ import java.io.OutputStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -29,7 +29,7 @@ import android.widget.VideoView;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB) public class VideoViewActivity extends Activity {
+public class VideoViewActivity extends Activity {
 	private VideoView myVideoView;
 
 	private int position = 0;
@@ -44,7 +44,9 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_video_view);
-		getActionBar().hide();
+		if (android.os.Build.VERSION.SDK_INT>=android.os.Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().hide();
+			}
 		mMixPanel =
 			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
 		JSONObject props = new JSONObject();
@@ -128,6 +130,10 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 		myVideoView.seekTo(position);
 
 	}
+	public void repost(View v){
+		save(findViewById(R.layout.activity_video_view));
+		new RepostAsyncTask().execute();
+	}
 	
 	public void save(View v){
 		
@@ -167,4 +173,32 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
         Toast.makeText(getApplicationContext(), "Saved to folder dir2!", Toast.LENGTH_SHORT).show();
 	}
+	
+	private class RepostAsyncTask extends AsyncTask<String, Void, Boolean> {
+		
+		@Override
+		protected Boolean doInBackground(String... params) {
+			boolean result = MyApplication.snapchat.sendStory(vidFile, true, 8, "");
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if(result){
+				Toast.makeText(getApplicationContext(), "Uploaded to your snapchat story!!", Toast.LENGTH_LONG).show();
+				JSONObject props = new JSONObject();
+				try {
+
+				props.put("username", MyApplication.username);
+					props.put("whosstory", MyApplication.currentStory.getSender());
+					mMixPanel.track("Reposted!", props);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}else{
+				Toast.makeText(getApplicationContext(), "Error reposting ;/", Toast.LENGTH_LONG).show();
+
+			}		}
+	}
+		
 }

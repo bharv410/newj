@@ -8,15 +8,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -27,7 +28,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -36,12 +36,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -50,22 +48,28 @@ import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
+import com.kidgeniushq.susd.mainfragments.AddFriendsFragment;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
 import com.kidgeniushq.susd.mainfragments.HelpFragment;
-import com.kidgeniushq.susd.mainfragments.UploadFragment;
+import com.kidgeniushq.susd.mainfragments.MyStoryGridFragment;
+import com.kidgeniushq.susd.model.MyStory;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.viewpagerindicator.LinePageIndicator;
 
 //icon by samuel green
 public class MainActivity extends FragmentActivity {
-	MyStorysAlarmReciever alarm = new MyStorysAlarmReciever();
+	
 	byte[] snapData;
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
@@ -83,26 +87,28 @@ public class MainActivity extends FragmentActivity {
 	protected Uri mMediaUri;
 	protected DialogInterface.OnClickListener mDialogListener;
 	public MixpanelAPI mMixpanel;
-	 GoogleCloudMessaging gcm;
+	GoogleCloudMessaging gcm;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		// Save the current Installation to Parse.
-		ParseInstallation.getCurrentInstallation().saveInBackground();
-		ParsePush.subscribeInBackground("", new SaveCallback() {
-			  @Override
-			  public void done(ParseException e) {
-			    if (e != null) {
-			      Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
-			    } else {
-			      Log.e("com.parse.push", "failed to subscribe for push", e);
-			    }
-			  }
-			});
-		mMixpanel =
-			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
-		//getRegId();
+				ParseInstallation.getCurrentInstallation().saveInBackground();
+				ParsePush.subscribeInBackground("", new SaveCallback() {
+					@Override
+					public void done(ParseException e) {
+						if (e != null) {
+							Log.d("com.parse.push",
+									"successfully subscribed to the broadcast channel.");
+						} else {
+							Log.e("com.parse.push", "failed to subscribe for push", e);
+						}
+					}
+				});
+		mMixpanel = MixpanelAPI.getInstance(getApplicationContext(),
+				"5cbb4a097c852a733dd1836f865b082d");
+		// getRegId();
 		JSONObject props = new JSONObject();
 		try {
 			props.put("SignedIn", "signedin");
@@ -117,9 +123,14 @@ public class MainActivity extends FragmentActivity {
 			getActionBar().hide();
 		}
 		// this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-		// getMyStories();
-		// alarm.setAlarm(getApplicationContext());
-		getNameAndPw();
+		try{
+			getNameAndPw();
+		 getMyStories();
+		}catch(Exception e){
+			System.out.println("stories getting error");
+		}
+		 
+		
 
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
@@ -128,11 +139,16 @@ public class MainActivity extends FragmentActivity {
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		LinePageIndicator titleIndicator = (LinePageIndicator) findViewById(R.id.indicator);
 		titleIndicator.setViewPager(mViewPager);
+		
 	}
+	public void feed(View v){
+		mViewPager.setCurrentItem(0);
+	}
+
 	@Override
 	protected void onDestroy() {
-	    mMixpanel.flush();
-	    super.onDestroy();
+		mMixpanel.flush();
+		super.onDestroy();
 	}
 
 	public void getNameAndPw() {
@@ -268,6 +284,16 @@ public class MainActivity extends FragmentActivity {
 			if (requestCode == PICK_PHOTO_REQUEST
 					|| requestCode == TAKE_PHOTO_REQUEST) {
 				fileType = ".png";
+
+				// if chose photo allow edits
+				if (requestCode == PICK_PHOTO_REQUEST) {
+					Intent editIntent = new Intent(MainActivity.this,
+							SendImageActivity.class);
+					editIntent.setData(mMediaUri);
+					editIntent.putExtra("fileType", fileType);
+					startActivity(editIntent);
+					return;
+				}
 			} else {
 				fileType = ".mp4";
 			}
@@ -287,16 +313,15 @@ public class MainActivity extends FragmentActivity {
 
 		@Override
 		public Fragment getItem(int position) {
+			
 			if (position == 0)
 				return new FeedFragment();
 			else if (position == 1)
-				return new UploadFragment();
+				return new AddFriendsFragment();
 			else if (position == 2)
 				return new HelpFragment();
-			else if (position == 3)
-				return new AddFriendsFragment();
 			else
-				return new AddEachOtherFragment();
+				return new MyStoryGridFragment();
 			// else if (position == 2)
 			// return new MyStoryGridFragment();
 			// else
@@ -307,15 +332,15 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 5;
+			return 4;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
 			if (position == 0)
-				return "Feed";
-			else if (position == 1)
 				return "Upload";
+			else if (position == 1)
+				return "Feed";
 			else if (position == 2)
 				return "Help";
 			else if (position == 3)
@@ -349,53 +374,52 @@ public class MainActivity extends FragmentActivity {
 		dialog.show();
 	}
 
-	public void uploadVideo(View v) {
-		startActivity(new Intent(this, SendImageActivity.class));
-	}
+	// public void uploadVideo(View v) {
+	// startActivity(new Intent(this, SendImageActivity.class));
+	// }
 
-	// private void getMyStories() {
-	// System.out.println("GETTING MY STORIES");
-	// MyApplication.allMyStories = new ArrayList<MyStory>();
-	// ParseQuery<ParseObject> query = ParseQuery.getQuery("TestSnaps");
-	// query.orderByDescending("createdAt");
-	// query.setLimit(6);
-	// query.findInBackground(new FindCallback<ParseObject>() {
-	// @Override
-	// public void done(List<ParseObject> scoreList, ParseException e) {
-	// System.out.println("QUERYING TESTSNAPS COMPLETE");
-	// if (e == null) {
-	// Log.d("score", "Retrieved " + scoreList.size() + " scores");
-	// for (int i=0;i< scoreList.size();i++) {
-	// final ParseObject snap = scoreList
-	// .get(i);
-	// System.out.println("got SNAP WITH ID: "
-	// + snap.getString("snapid"));
-	// MyApplication.allMyStories.add(new MyStory(snap
-	// .getInt("viewcount"), snap.getString("snapid"),
-	// snap.getString("date")));
-	// ParseFile actualSnap = snap.getParseFile("story");
-	// actualSnap.getDataInBackground(new GetDataCallback() {
-	// public void done(byte[] data, ParseException e) {
-	// System.out.println("QUERYING PHOTO COMPLETE");
-	// if (e == null) {
-	// // see mystory constructor
-	// MyApplication.allMyStories.get(
-	// MyApplication.addedImageToMyStory)
-	// .setImageBytes(data);
-	// MyApplication.addedImageToMyStory++;
-	// System.out
-	// .println("ADDED TO GLOBAL VARIABLE");
-	// }
-	// }
-	// });
-	// }
-	// System.out.println("DONE");
-	// } else {
-	// System.out.println("error");
-	// }
-	// }
-	// });
-	// }
+	private void getMyStories() {
+		System.out.println("GETTING MY STORIES");
+		MyApplication.allMyStories = new ArrayList<MyStory>();
+		ParseQuery<ParseObject> query = ParseQuery
+				.getQuery(MyApplication.username);
+		query.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> scoreList, ParseException e) {
+				System.out.println("QUERYING COMPLETE");
+				if (e == null) {
+					Log.d("score", "Retrieved " + scoreList.size() + " scores");
+					for (int i = 0; i < scoreList.size(); i++) {
+						final ParseObject snap = scoreList.get(i);
+						System.out.println("got SNAP WITH ID: "
+								+ snap.getString("snapid"));
+						MyApplication.allMyStories.add(new MyStory(snap
+								.getInt("viewcount"), snap.getString("snapid"),
+								snap.getString("date")));
+						ParseFile actualSnap = snap.getParseFile("story");
+						actualSnap.getDataInBackground(new GetDataCallback() {
+							public void done(byte[] data, ParseException e) {
+								System.out.println("QUERYING PHOTO COMPLETE");
+								if (e == null) {
+									// see mystory constructor
+									MyApplication.allMyStories.get(
+											MyApplication.addedImageToMyStory)
+											.setImageBytes(data);
+									MyApplication.addedImageToMyStory++;
+									System.out
+											.println("ADDED TO GLOBAL VARIABLE");
+								}
+							}
+						});
+					}
+					System.out.println("DONE");
+				} else {
+					System.out.println("error");
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	public void sendItOut(View v) {
 		ImageView imageViewForChosenPic = (ImageView) findViewById(R.id.uploadImageView);
@@ -592,56 +616,62 @@ public class MainActivity extends FragmentActivity {
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
-	public void dropKeyboard(){
-		InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-	    // check if no view has focus: 
-	    View view = this.getCurrentFocus();
-	    if (view != null) {
-	        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-	    } 
+
+	public void dropKeyboard() {
+		InputMethodManager inputManager = (InputMethodManager) this
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		// check if no view has focus:
+		View view = this.getCurrentFocus();
+		if (view != null) {
+			inputManager.hideSoftInputFromWindow(view.getWindowToken(),
+					InputMethodManager.HIDE_NOT_ALWAYS);
+		}
 	}
-	
-	public void getRegId(){
-		//saves regid to parse & mixpanel so we can later send notifs to all these folks
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
-                    }
-                    MyApplication.regId = gcm.register(("160429782554"));
-                		
-                			FileWriter out = new FileWriter(new File(getFilesDir(), "regid.txt"));
-                			out.write(MyApplication.regId);
-                			out.close();
-                			
-                	
-                    msg = "Device registered, registration ID=" + MyApplication.regId;
-                    
-                    Log.i("GCM",  msg);
-                    final ParseObject testObject = new ParseObject("RegIds");
-    				testObject.put("regids",MyApplication.regId);
-    				testObject.saveInBackground(new SaveCallback() {
-    					@Override
-    					public void done(ParseException arg0) {
-    						JSONObject props = new JSONObject();
-    						try {
+
+	public void getRegId() {
+		// saves regid to parse & mixpanel so we can later send notifs to all
+		// these folks
+		new AsyncTask<Void, Void, String>() {
+			@Override
+			protected String doInBackground(Void... params) {
+				String msg = "";
+				try {
+					if (gcm == null) {
+						gcm = GoogleCloudMessaging
+								.getInstance(getApplicationContext());
+					}
+					MyApplication.regId = gcm.register(("160429782554"));
+
+					FileWriter out = new FileWriter(new File(getFilesDir(),
+							"regid.txt"));
+					out.write(MyApplication.regId);
+					out.close();
+
+					msg = "Device registered, registration ID="
+							+ MyApplication.regId;
+
+					Log.i("GCM", msg);
+					final ParseObject testObject = new ParseObject("RegIds");
+					testObject.put("regids", MyApplication.regId);
+					testObject.saveInBackground(new SaveCallback() {
+						@Override
+						public void done(ParseException arg0) {
+							JSONObject props = new JSONObject();
+							try {
 								props.put("regid", MyApplication.regId);
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
-    						mMixpanel.track("addedregid", props);
-    					}
-    				});	
-    			
-                    
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
+							mMixpanel.track("addedregid", props);
+						}
+					});
 
-                }
-                return msg;
-            }}.execute(null, null, null);
-    }
+				} catch (IOException ex) {
+					msg = "Error :" + ex.getMessage();
+
+				}
+				return msg;
+			}
+		}.execute(null, null, null);
+	}
 }

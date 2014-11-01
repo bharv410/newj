@@ -43,7 +43,7 @@ public class GetStoriesAsyncTask extends AsyncTask<String, Void, String> {
 				mystorysfrag.addImagesToScreen();
 				MyApplication.friendsNames.add("My Story");
 				//save unread to gallery
-new SaveUnreadToGalleryTask().execute();
+//new SaveUnreadToGalleryTask().execute();
 				
 				for(Friend fr : MyApplication.myFriends){
 					
