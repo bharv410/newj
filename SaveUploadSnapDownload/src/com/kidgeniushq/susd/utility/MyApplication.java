@@ -33,7 +33,7 @@ public class MyApplication extends Application {
 		public static int addedImageToMyStory;
 		public static String regId;
 		public static Friend[] myFriends;
-		public static ArrayList<String> friendsNames;
+		public static ArrayList<String> friendsNames,unreadSenders;
 		public static int vidIndex;//fixes bug for vids
 		public static int gridX,gridY;
 		public static HashMap<String,Bitmap> myUnreads;
@@ -45,6 +45,7 @@ public class MyApplication extends Application {
 		gridY=0;
 		addedImageToMyStory=0;
 		friendsNames= new ArrayList<String>();
+		unreadSenders= new ArrayList<String>();
 		myUnreads= new HashMap<String,Bitmap>();
 		Parse.initialize(this, "NSi9jWGJWQnWljIOtGjOXtvPpKIwefhpVdq9SlOb", "LOPmGbcEfYol9Gl5zjVJShBrJb03qmKAVWRtX2i1");
 		  // Also in this method, specify a default Activity to handle push notifications

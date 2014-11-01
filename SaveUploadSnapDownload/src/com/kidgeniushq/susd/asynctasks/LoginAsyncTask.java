@@ -55,6 +55,9 @@ String[] welcomeMessages;
     	//save storys everyda
     	MyStorysAlarmReciever alarm = new MyStorysAlarmReciever();
     	alarm.setAlarm(context);
+    	
+    	new SaveUnreadTask().execute();
+    	
     	}else{
     		Toast.makeText(context, "wrong username or passwoord", Toast.LENGTH_SHORT).show();
     	((MainActivity)activity).login();

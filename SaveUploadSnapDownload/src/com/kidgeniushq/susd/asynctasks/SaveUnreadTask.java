@@ -18,9 +18,12 @@ public class SaveUnreadTask extends AsyncTask<Void,Void,Boolean>{
 	protected Boolean doInBackground(Void... arg0) {
 		count=0;
 		for(Snap s:MyApplication.allMySnaps){
+			if(s.isImage()){
 		byte[] snapBytes = MyApplication.snapchat.getSnap(s);
-		MyApplication.myUnreads.put(s.getSender(),Utility.getPhoto(snapBytes));
+		MyApplication.myUnreads.put(s.getSender()+s.getSentTime(),Utility.getPhoto(snapBytes));
+		MyApplication.unreadSenders.add(s.getSender()+s.getSentTime());
 		count++;
+			}
 		}
 		
 		return null;
