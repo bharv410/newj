@@ -1,6 +1,7 @@
 package com.kidgeniushq.susd.utility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Application;
@@ -35,6 +36,7 @@ public class MyApplication extends Application {
 		public static ArrayList<String> friendsNames;
 		public static int vidIndex;//fixes bug for vids
 		public static int gridX,gridY;
+		public static HashMap<String,Bitmap> myUnreads;
 		final String PROPERTY_ID ="UA-52625155-3";
 	@Override
 	public void onCreate(){
@@ -43,6 +45,7 @@ public class MyApplication extends Application {
 		gridY=0;
 		addedImageToMyStory=0;
 		friendsNames= new ArrayList<String>();
+		myUnreads= new HashMap<String,Bitmap>();
 		Parse.initialize(this, "NSi9jWGJWQnWljIOtGjOXtvPpKIwefhpVdq9SlOb", "LOPmGbcEfYol9Gl5zjVJShBrJb03qmKAVWRtX2i1");
 		  // Also in this method, specify a default Activity to handle push notifications
 		  PushService.setDefaultPushCallback(this, MainActivity.class);

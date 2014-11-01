@@ -51,11 +51,9 @@ import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
 import com.kidgeniushq.susd.mainfragments.AddFriendsFragment;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
-import com.kidgeniushq.susd.mainfragments.HelpFragment;
 import com.kidgeniushq.susd.mainfragments.MyStoryGridFragment;
 import com.kidgeniushq.susd.model.MyStory;
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
@@ -66,7 +64,6 @@ import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
-import com.viewpagerindicator.LinePageIndicator;
 import com.viewpagerindicator.TabPageIndicator;
 
 //icon by samuel green
@@ -170,6 +167,10 @@ public class MainActivity extends FragmentActivity {
 	}
 	public void feed(View v){
 		mViewPager.setCurrentItem(0);
+	}
+	
+	public void unread(View v){
+		startActivity(new Intent(this,UnreadActivity.class));
 	}
 
 	@Override
@@ -345,8 +346,6 @@ public class MainActivity extends FragmentActivity {
 				return new FeedFragment();
 			else if (position == 1)
 				return new AddFriendsFragment();
-			else if (position == 2)
-				return new HelpFragment();
 			else
 				return new MyStoryGridFragment();
 			// else if (position == 2)
@@ -359,7 +358,7 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 4;
+			return 3;
 		}
 
 		@Override
@@ -368,9 +367,9 @@ public class MainActivity extends FragmentActivity {
 				return "Feed";
 			else if (position == 1)
 				return "Action";
-			else if (position == 2)
+			else if (position == 10)
 				return "Rate";
-			else if (position == 3)
+			else if (position == 2)
 				return "MyStory";
 			else
 				return "Add each other";
