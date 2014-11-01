@@ -34,10 +34,13 @@ public class MyApplication extends Application {
 		public static Friend[] myFriends;
 		public static ArrayList<String> friendsNames;
 		public static int vidIndex;//fixes bug for vids
+		public static int gridX,gridY;
 		final String PROPERTY_ID ="UA-52625155-3";
 	@Override
 	public void onCreate(){
 		super.onCreate();
+		gridX=0;
+		gridY=0;
 		addedImageToMyStory=0;
 		friendsNames= new ArrayList<String>();
 		Parse.initialize(this, "NSi9jWGJWQnWljIOtGjOXtvPpKIwefhpVdq9SlOb", "LOPmGbcEfYol9Gl5zjVJShBrJb03qmKAVWRtX2i1");

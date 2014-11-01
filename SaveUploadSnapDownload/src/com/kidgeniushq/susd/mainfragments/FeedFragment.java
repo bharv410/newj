@@ -194,8 +194,7 @@ public class FeedFragment extends Fragment {
 					      WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 			}else{
 				MyApplication.imageList.add(bitmap);
-				sa.notifyDataSetInvalidated();
-				gv.invalidateViews();
+				sa.notifyDataSetChanged();
 			}
 			MyApplication.requestInProgress = false;
 		}

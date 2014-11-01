@@ -55,12 +55,6 @@ String[] welcomeMessages;
     	//save storys everyda
     	MyStorysAlarmReciever alarm = new MyStorysAlarmReciever();
     	alarm.setAlarm(context);
-    	
-    	//set mystorysgrid photos
-    	MyStoryGridFragment mystorysfrag = (MyStoryGridFragment)((MainActivity)activity).getSupportFragmentManager().findFragmentByTag(
-                "android:switcher:"+R.id.pager+":3");
-    	mystorysfrag.setStoryAdapter();
-    	
     	}else{
     		Toast.makeText(context, "wrong username or passwoord", Toast.LENGTH_SHORT).show();
     	((MainActivity)activity).login();

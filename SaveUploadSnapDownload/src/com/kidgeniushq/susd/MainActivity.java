@@ -36,6 +36,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -66,6 +67,7 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.viewpagerindicator.LinePageIndicator;
+import com.viewpagerindicator.TabPageIndicator;
 
 //icon by samuel green
 public class MainActivity extends FragmentActivity {
@@ -137,8 +139,33 @@ public class MainActivity extends FragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setOffscreenPageLimit(4);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		LinePageIndicator titleIndicator = (LinePageIndicator) findViewById(R.id.indicator);
+		TabPageIndicator titleIndicator = (TabPageIndicator) findViewById(R.id.indicator);
 		titleIndicator.setViewPager(mViewPager);
+		titleIndicator.setOnPageChangeListener(new OnPageChangeListener(){
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onPageSelected(int arg0) {
+				//show my stories
+				if(arg0==3 && MyApplication.allMyStories.size()>0){
+			    	MyStoryGridFragment mystorysfrag = (MyStoryGridFragment)getSupportFragmentManager().findFragmentByTag(
+			                "android:switcher:"+R.id.pager+":3");
+			    	mystorysfrag.setStoryAdapter();
+				}
+			}
+			
+		});
 		
 	}
 	public void feed(View v){
@@ -338,13 +365,13 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public CharSequence getPageTitle(int position) {
 			if (position == 0)
-				return "Upload";
-			else if (position == 1)
 				return "Feed";
+			else if (position == 1)
+				return "Action";
 			else if (position == 2)
-				return "Help";
+				return "Rate";
 			else if (position == 3)
-				return "Add Popular accounts!";
+				return "MyStory";
 			else
 				return "Add each other";
 		}
