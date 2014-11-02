@@ -18,6 +18,11 @@ ArrayAdapter<String> adapter;
 		setContentView(R.layout.activity_unread);
 		adapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,MyApplication.unreadSenders);
 		setListAdapter(adapter);
+		
+		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().hide();
+		}
 	}
 	
 		@Override 

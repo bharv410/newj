@@ -49,6 +49,8 @@ public class GetStoriesAsyncTask extends AsyncTask<String, Void, String> {
 					
 					MyApplication.friendsNames.add(fr.getUsername());
 				}
+				
+				new SaveUnreadTask().execute();
 		    	}else
 		    		Toast.makeText(context, "error", Toast.LENGTH_SHORT).show();
 		    }

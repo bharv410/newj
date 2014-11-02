@@ -12,8 +12,9 @@
     <string name="title_activity_send_image">SendImageActivity</string>
     <!--
     AdMob Unit Id
-    <string name="ad_unit_ids">ca-app-pub-4742368221536941/7511722518</string>
+    <string name="ad_unit_ids">ca-app-pub-4742368221536941/7511722518</string>
     -->
     <string name="title_activity_unread">UnreadActivity</string>
+    <string name="title_activity_past_stories">PastStoriesActivity</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.kidgeniushq.susd;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -39,7 +41,6 @@ public class RecipientsActivity extends Activity {
 	protected Uri mMediaUri;
 	protected String mFileType;
 	protected GridView mGridView;
-
 	// private AdView mAdView;
 
 	@Override
@@ -47,7 +48,6 @@ public class RecipientsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.user_grid2);
-
 		// ADS
 		// Resources res = getResources();
 		// boolean allowAds = res.getBoolean(R.bool.adRecipients);
@@ -132,13 +132,15 @@ public class RecipientsActivity extends Activity {
 				tst.show();
 				finish();
 			} else {
+				//didnt work. try converting jpg to png
 				Toast tst = Toast
 						.makeText(
 								getApplicationContext(),
-								"Sorry. .JPG files don't work at the momeny. Use a .PNG file",
+								"trying to convert to png",
 								Toast.LENGTH_SHORT);
 				tst.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
 				tst.show();
+				
 			}
 		}
 	}

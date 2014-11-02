@@ -55,16 +55,11 @@ public class BigView extends Activity {
 			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
 		JSONObject props = new JSONObject();
 		try {
-
 		props.put("username", MyApplication.username);
-			props.put("whosstory", MyApplication.currentStory.getSender());
 			mMixpanel.track("Opened Image", props);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
 		iv = (ImageView) findViewById(R.id.bigImageView);
 		iv.setImageBitmap(MyApplication.currentBitmap);
 

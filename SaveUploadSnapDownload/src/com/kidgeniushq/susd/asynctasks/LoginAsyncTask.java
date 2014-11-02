@@ -12,9 +12,6 @@ import android.widget.Toast;
 
 import com.habosa.javasnap.Snapchat;
 import com.kidgeniushq.susd.MainActivity;
-import com.kidgeniushq.susd.R;
-import com.kidgeniushq.susd.mainfragments.FeedFragment;
-import com.kidgeniushq.susd.mainfragments.MyStoryGridFragment;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
 
@@ -56,7 +53,8 @@ String[] welcomeMessages;
     	MyStorysAlarmReciever alarm = new MyStorysAlarmReciever();
     	alarm.setAlarm(context);
     	
-    	new SaveUnreadTask().execute();
+    	//get stories
+    	((MainActivity)activity).getMyStories();
     	
     	}else{
     		Toast.makeText(context, "wrong username or passwoord", Toast.LENGTH_SHORT).show();

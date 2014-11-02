@@ -36,7 +36,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -51,7 +50,6 @@ import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
 import com.kidgeniushq.susd.mainfragments.AddFriendsFragment;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
-import com.kidgeniushq.susd.mainfragments.MyStoryGridFragment;
 import com.kidgeniushq.susd.model.MyStory;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -111,7 +109,6 @@ public class MainActivity extends FragmentActivity {
 		JSONObject props = new JSONObject();
 		try {
 			props.put("SignedIn", "signedin");
-			props.put("signedIn", "signedin");
 			mMixpanel.track("Someone opened the app!", props);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -124,13 +121,9 @@ public class MainActivity extends FragmentActivity {
 		// this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		try{
 			getNameAndPw();
-		 getMyStories();
 		}catch(Exception e){
 			System.out.println("stories getting error");
 		}
-		 
-		
-
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
 		mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -138,31 +131,6 @@ public class MainActivity extends FragmentActivity {
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		TabPageIndicator titleIndicator = (TabPageIndicator) findViewById(R.id.indicator);
 		titleIndicator.setViewPager(mViewPager);
-		titleIndicator.setOnPageChangeListener(new OnPageChangeListener(){
-
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onPageSelected(int arg0) {
-				//show my stories
-				if(arg0==3 && MyApplication.allMyStories.size()>0){
-			    	MyStoryGridFragment mystorysfrag = (MyStoryGridFragment)getSupportFragmentManager().findFragmentByTag(
-			                "android:switcher:"+R.id.pager+":3");
-			    	mystorysfrag.setStoryAdapter();
-				}
-			}
-			
-		});
 		
 	}
 	public void feed(View v){
@@ -171,6 +139,11 @@ public class MainActivity extends FragmentActivity {
 	
 	public void unread(View v){
 		startActivity(new Intent(this,UnreadActivity.class));
+	}
+	
+	public void pastStories(View v){
+		startActivity(new Intent(this,PastStoriesActivity.class));
+		
 	}
 
 	@Override
@@ -312,9 +285,7 @@ public class MainActivity extends FragmentActivity {
 			if (requestCode == PICK_PHOTO_REQUEST
 					|| requestCode == TAKE_PHOTO_REQUEST) {
 				fileType = ".png";
-
-				// if chose photo allow edits
-				if (requestCode == PICK_PHOTO_REQUEST) {
+				if (requestCode == PICK_PHOTO_REQUEST){
 					Intent editIntent = new Intent(MainActivity.this,
 							SendImageActivity.class);
 					editIntent.setData(mMediaUri);
@@ -322,6 +293,7 @@ public class MainActivity extends FragmentActivity {
 					startActivity(editIntent);
 					return;
 				}
+				
 			} else {
 				fileType = ".mp4";
 			}
@@ -344,10 +316,8 @@ public class MainActivity extends FragmentActivity {
 			
 			if (position == 0)
 				return new FeedFragment();
-			else if (position == 1)
+			else 
 				return new AddFriendsFragment();
-			else
-				return new MyStoryGridFragment();
 			// else if (position == 2)
 			// return new MyStoryGridFragment();
 			// else
@@ -358,7 +328,7 @@ public class MainActivity extends FragmentActivity {
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 3;
+			return 2;
 		}
 
 		@Override
@@ -404,7 +374,7 @@ public class MainActivity extends FragmentActivity {
 	// startActivity(new Intent(this, SendImageActivity.class));
 	// }
 
-	private void getMyStories() {
+	public void getMyStories() {
 		System.out.println("GETTING MY STORIES");
 		MyApplication.allMyStories = new ArrayList<MyStory>();
 		ParseQuery<ParseObject> query = ParseQuery

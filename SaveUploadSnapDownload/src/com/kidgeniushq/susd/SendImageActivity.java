@@ -71,8 +71,10 @@ public class SendImageActivity extends Activity {
 				FileOutputStream outputStream;
 
 				outputStream = new FileOutputStream(currentImageFile);
-
-				outputStream.write(inputData);
+				
+				//compress & write bitmap to handle jpg & png!!!!!!!
+				       MyApplication.currentBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream); //100-best quality
+				//outputStream.write(inputData);
 				outputStream.close();
 				// get path so i can read the extensions
 				// DOES NOT DO ANYTHING WITH IT YET

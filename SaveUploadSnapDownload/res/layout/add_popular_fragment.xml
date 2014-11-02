@@ -6,7 +6,7 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="210dp"
-        android:layout_above="@+id/choosePicButton"
+        android:layout_above="@+id/pastButton"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView1ititle" >
 
@@ -51,5 +51,15 @@
     android:layout_alignParentTop="true"
     android:text="Click to add these popular users:"
     android:textAppearance="?android:attr/textAppearanceLarge" />
+
+<Button
+    android:id="@+id/pastButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/choosePicButton"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:text="My Past Snaps"
+    android:onClick="pastStories" />
 
 </RelativeLayout>
