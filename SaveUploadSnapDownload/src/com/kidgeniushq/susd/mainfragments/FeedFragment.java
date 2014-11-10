@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -52,7 +53,7 @@ public class FeedFragment extends Fragment {
 	GridView gv; //for images
 	int gridViewNum=0;
 	SnapAdapter sa;
-	
+	ProgressBar feedProgressBar;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class FeedFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		feedProgressBar= (ProgressBar)getActivity().findViewById(R.id.feedProgressBar);
 		
 	}
 	public class GetSnap extends AsyncTask<Object, String, Bitmap> {
@@ -76,6 +78,8 @@ public class FeedFragment extends Fragment {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			if(feedProgressBar!=null)
+				feedProgressBar.setVisibility(View.VISIBLE);
 			MyApplication.requestInProgress = true;
 		}
 
@@ -154,6 +158,9 @@ public class FeedFragment extends Fragment {
 
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
+			if(feedProgressBar!=null)
+				feedProgressBar.setVisibility(View.INVISIBLE);
+			
 			if (MyApplication.imageList==null) {
 				
 				MyApplication.imageList = new ArrayList<Bitmap>();

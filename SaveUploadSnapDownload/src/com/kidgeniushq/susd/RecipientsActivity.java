@@ -48,14 +48,6 @@ public class RecipientsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.user_grid2);
-		// ADS
-		// Resources res = getResources();
-		// boolean allowAds = res.getBoolean(R.bool.adRecipients);
-		// if(allowAds){
-		// mAdView = (AdView) findViewById(R.id.adView);
-		// mAdView.loadAd(new AdRequest.Builder().build());
-		// }
-		// ADS
 
 		mGridView = (GridView) findViewById(R.id.friendsGrid);
 		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -63,9 +55,6 @@ public class RecipientsActivity extends Activity {
 
 		TextView emptyTextView = (TextView) findViewById(android.R.id.empty);
 		mGridView.setEmptyView(emptyTextView);
-
-		mMediaUri = getIntent().getData();
-		mFileType = getIntent().getExtras().getString("fileType");
 	}
 
 	@Override
@@ -108,19 +97,12 @@ public class RecipientsActivity extends Activity {
 				story = false;
 			}
 
-			boolean video = (getIntent().getStringExtra("fileType")
-					.contains(".mp4"));
+			boolean video = false;
 
-			if (SendImageActivity.currentImageFile != null) {
-				return MyApplication.snapchat.sendSnap(
-						SendImageActivity.currentImageFile, recipients, video,
+			
+				return MyApplication.snapchat.sendSnap(new File(getFilesDir(),"uploadimage.jpeg"), recipients, video,
 						story, 10);
-			} else {
-				return MyApplication.snapchat.sendSnap(
-						new File(mMediaUri.getPath()), recipients, video,
-						story, 10);
-			}
-
+			
 		}
 
 		@Override

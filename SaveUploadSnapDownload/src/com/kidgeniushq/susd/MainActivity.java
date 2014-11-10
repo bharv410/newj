@@ -38,6 +38,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -48,6 +49,9 @@ import com.kidgeniushq.susd.mainfragments.FeedFragment;
 import com.kidgeniushq.susd.mainfragments.UploadFragment;
 import com.kidgeniushq.susd.model.MyStory;
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.kidgeniushq.susd.utility.Utility;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -59,15 +63,15 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.viewpagerindicator.TabPageIndicator;
 
-//icon by samuel green & iconomatic & simple icons
+//icon by samuel green & iconomatic & simple icons & Кирилл Конюх
 public class MainActivity extends FragmentActivity {
 	
-	private static final String[] TABS = new String[] { "upload ", "download ", "follow"};
+	private static final String[] TABS = new String[] { "download ", "upload ", "follow"};
 	private static final int[] ICONS = new int[] {
         R.drawable.downloadimage,
         R.drawable.uploadimage,
         R.drawable.followimage};
-	
+	DisplayImageOptions options;
 	//byte[] snapData;
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
@@ -85,6 +89,7 @@ public class MainActivity extends FragmentActivity {
 	protected Uri mMediaUri;
 	protected DialogInterface.OnClickListener mDialogListener;
 	GoogleCloudMessaging gcm;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +109,15 @@ public class MainActivity extends FragmentActivity {
 					}
 				});
 		// getRegId();
-		
+				options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.avatar_empty)
+				.showImageForEmptyUri(R.drawable.avatar_empty)
+				.showImageOnFail(R.drawable.avatar_empty)
+				.cacheInMemory(true) 
+				.cacheOnDisk(true) 
+				.considerExifParams(true) 
+				.bitmapConfig(Bitmap.Config.RGB_565)
+				.build(); 
 		mContext = getApplicationContext();
 		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -218,8 +231,31 @@ public class MainActivity extends FragmentActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (resultCode == RESULT_OK) {
-			if (requestCode == PICK_PHOTO_REQUEST
-					|| requestCode == PICK_VIDEO_REQUEST) {
+			//PICKED A PHOTO
+			if (requestCode == PICK_PHOTO_REQUEST){
+				if (data == null) {
+					Toast.makeText(this, "error", Toast.LENGTH_LONG).show();
+				} else {
+					mMediaUri = data.getData();
+					MyApplication.currentBitmap=ImageLoader.getInstance().loadImageSync("file:///"+Utility.getPath(getApplicationContext(), mMediaUri), options);
+					startActivity(new Intent(MainActivity.this,
+							SendImageActivity.class));
+					return;
+				}
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			//PICKEDA VIDEO
+			if (requestCode == PICK_VIDEO_REQUEST) {
 				if (data == null) {
 					Toast.makeText(this, "error", Toast.LENGTH_LONG).show();
 				} else {
@@ -270,22 +306,10 @@ public class MainActivity extends FragmentActivity {
 			String fileType;
 			if (requestCode == PICK_PHOTO_REQUEST
 					|| requestCode == TAKE_PHOTO_REQUEST) {
-				fileType = ".png";
-				if (requestCode == PICK_PHOTO_REQUEST){
-					Intent editIntent = new Intent(MainActivity.this,
-							SendImageActivity.class);
-					editIntent.setData(mMediaUri);
-					editIntent.putExtra("fileType", fileType);
-					startActivity(editIntent);
-					return;
-				}
-				
+				fileType = ".png";				
 			} else {
 				fileType = ".mp4";
 			}
-
-			recipientsIntent.putExtra("fileType", fileType);
-			startActivity(recipientsIntent);
 		} else if (resultCode != RESULT_CANCELED) {
 			Toast.makeText(this, "error", Toast.LENGTH_LONG).show();
 		}
@@ -603,5 +627,8 @@ public class MainActivity extends FragmentActivity {
 			inputManager.hideSoftInputFromWindow(view.getWindowToken(),
 					InputMethodManager.HIDE_NOT_ALWAYS);
 		}
+	}
+	public void search(View v){
+		startActivity(new Intent(this,SearchFriendsActivity.class));
 	}
 }

@@ -22,7 +22,7 @@ import com.parse.PushService;
 public class MyApplication extends Application {
 	//static variables for fragments to use
 	public static File[] vidFiles;
-		public static String username, password;
+		public static String username, password,currentFriend;
 		public static ArrayList<MyStory> allMyStories;
 		public static Snap[] allMySnaps;
 		public static Snapchat snapchat;

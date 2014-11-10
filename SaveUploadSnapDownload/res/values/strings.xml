@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="celebrity_title">Click a celebrities username to follow:</string>
+
+    <string name="celebrity_title">Click a celebrities username to follow:</string>
     <string name="app_name">Save Upload Snap Download</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
@@ -12,9 +13,11 @@
     <string name="title_activity_send_image">SendImageActivity</string>
     <!--
     AdMob Unit Id
-    <string name="ad_unit_ids">ca-app-pub-4742368221536941/7511722518</string>
+    <string name="ad_unit_ids">ca-app-pub-4742368221536941/7511722518</string>
     -->
     <string name="title_activity_unread">UnreadActivity</string>
     <string name="title_activity_past_stories">PastStoriesActivity</string>
+    <string name="title_activity_friends_snap">FriendsSnapActivity</string>
+    <string name="title_activity_search_friends">SearchFriendsActivity</string>
 
 </resources>

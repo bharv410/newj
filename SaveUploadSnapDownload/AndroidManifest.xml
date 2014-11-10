@@ -15,7 +15,7 @@
 
     <!--
   IMPORTANT: Change "com.parse.tutorials.pushnotifications.permission.C2D_MESSAGE" in the lines below
-  to match your app's package name + ".permission.C2D_MESSAGE".
+  to match your app's package name + ".permission.C2D_MESSAGE".
     -->
     <permission
         android:name="com.kidgeniushq.susd.permission.C2D_MESSAGE"
@@ -108,6 +108,14 @@
         <activity
             android:name=".PastStoriesActivity"
             android:label="@string/title_activity_past_stories" >
+        </activity>
+        <activity
+            android:name=".FriendsSnapActivity"
+            android:label="@string/title_activity_friends_snap" >
+        </activity>
+        <activity
+            android:name=".SearchFriendsActivity"
+            android:label="@string/title_activity_search_friends" >
         </activity>
     </application>
 
