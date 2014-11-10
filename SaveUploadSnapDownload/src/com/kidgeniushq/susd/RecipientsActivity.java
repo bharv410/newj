@@ -33,7 +33,6 @@ import android.widget.Toast;
 import com.kidgeniushq.susd.adapters.UserAdapter;
 import com.kidgeniushq.susd.utility.MyApplication;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class RecipientsActivity extends Activity {
 
 	public static final String TAG = RecipientsActivity.class.getSimpleName();
@@ -48,7 +47,10 @@ public class RecipientsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.user_grid2);
-
+		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().hide();
+		}
 		mGridView = (GridView) findViewById(R.id.friendsGrid);
 		mGridView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		mGridView.setOnItemClickListener(mOnItemClickListener);
@@ -118,7 +120,7 @@ public class RecipientsActivity extends Activity {
 				Toast tst = Toast
 						.makeText(
 								getApplicationContext(),
-								"trying to convert to png",
+								"Error sending snap",
 								Toast.LENGTH_SHORT);
 				tst.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
 				tst.show();

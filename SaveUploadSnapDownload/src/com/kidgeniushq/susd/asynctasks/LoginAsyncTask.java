@@ -16,67 +16,72 @@ import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.MyStorysAlarmReciever;
 
 public class LoginAsyncTask extends AsyncTask<String, Void, String> {
-Context context;
-Activity activity;
-ProgressDialog progress;
-String[] welcomeMessages;
-	public LoginAsyncTask(Context ctx, Activity act){
+	Context context;
+	Activity activity;
+	ProgressDialog progress;
+	String[] welcomeMessages;
+
+	public LoginAsyncTask(Context ctx, Activity act) {
 		super();
-		context=ctx;
-		activity=act;
-		welcomeMessages=new String[5];
-		welcomeMessages[0]="Please rate nicely in app store & leave suggestions for next week's improvements : )";
+		context = ctx;
+		activity = act;
+		welcomeMessages = new String[5];
+		welcomeMessages[0] = "Please rate nicely in app store & leave suggestions for next week's improvements : )";
 	}
-	
+
 	@Override
-    protected void onPreExecute() {
+	protected void onPreExecute() {
 		progress = ProgressDialog.show(this.activity, "Logging in...",
-			    welcomeMessages[0], true);
-    }
-    @Override
-    protected String doInBackground(String... params) {
-    	MyApplication.snapchat = Snapchat.login(params[0], params[1]);
-        return "Executed";
-    }
+				welcomeMessages[0], true);
+	}
 
-    @Override
-    protected void onPostExecute(String result) {
-    	progress.dismiss();    			
-    	if(MyApplication.snapchat!=null){
-    		 //save username to file for auto login
-   		 saveToFile(MyApplication.username,MyApplication.password);
-   		 ((MainActivity)activity).dropKeyboard();
-    	GetStoriesAsyncTask gsat= new GetStoriesAsyncTask(context,activity);
-    	gsat.execute();
-    	
-    	//save storys everyda
-    	MyStorysAlarmReciever alarm = new MyStorysAlarmReciever();
-    	alarm.setAlarm(context);
-    	
-    	//get stories
-    	//((MainActivity)activity).getMyStories();
-    	
-    	}else{
-    		Toast.makeText(context, "wrong username or passwoord", Toast.LENGTH_SHORT).show();
-    	((MainActivity)activity).login();
-    	}
-    }    
+	@Override
+	protected String doInBackground(String... params) {
+		MyApplication.snapchat = Snapchat.login(params[0], params[1]);
+		return "Executed";
+	}
 
-    @Override
-    protected void onProgressUpdate(Void... values) {}
-    
-    public void saveToFile(String un, String pw) {
+	@Override
+	protected void onPostExecute(String result) {
+		progress.dismiss();
+		if (MyApplication.snapchat != null) {
+			// save username to file for auto login
+			saveToFile(MyApplication.username, MyApplication.password);
+			((MainActivity) activity).dropKeyboard();
+			GetStoriesAsyncTask gsat = new GetStoriesAsyncTask(context,
+					activity);
+			gsat.execute();
+
+			// save storys everyda
+			MyStorysAlarmReciever alarm = new MyStorysAlarmReciever();
+			alarm.setAlarm(context);
+
+			// get stories
+			// ((MainActivity)activity).getMyStories();
+
+		} else {
+			Toast.makeText(context, "wrong username or passwoord",
+					Toast.LENGTH_SHORT).show();
+			((MainActivity) activity).login();
+		}
+	}
+
+	@Override
+	protected void onProgressUpdate(Void... values) {
+	}
+
+	public void saveToFile(String un, String pw) {
 		try {
-			FileWriter out = new FileWriter(new File(context
-					.getFilesDir(), "username.txt"));
+			FileWriter out = new FileWriter(new File(context.getFilesDir(),
+					"username.txt"));
 			out.write(un);
 			out.close();
-			
-			out = new FileWriter(new File(context
-					.getFilesDir(), "password.txt"));
+
+			out = new FileWriter(
+					new File(context.getFilesDir(), "password.txt"));
 			out.write(pw);
 			out.close();
-			
+
 		} catch (IOException e) {
 			System.out.print(e);
 		}

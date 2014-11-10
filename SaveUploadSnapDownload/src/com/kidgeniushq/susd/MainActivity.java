@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import com.viewpagerindicator.IconPagerAdapter;
+
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -38,7 +37,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -61,6 +59,7 @@ import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.viewpagerindicator.IconPagerAdapter;
 import com.viewpagerindicator.TabPageIndicator;
 
 //icon by samuel green & iconomatic & simple icons & Кирилл Конюх
@@ -232,7 +231,7 @@ public class MainActivity extends FragmentActivity {
 
 		if (resultCode == RESULT_OK) {
 			//PICKED A PHOTO
-			if (requestCode == PICK_PHOTO_REQUEST){
+			if (requestCode == PICK_PHOTO_REQUEST || requestCode == TAKE_PHOTO_REQUEST){
 				if (data == null) {
 					Toast.makeText(this, "error", Toast.LENGTH_LONG).show();
 				} else {
@@ -243,73 +242,12 @@ public class MainActivity extends FragmentActivity {
 					return;
 				}
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+						
 			//PICKEDA VIDEO
-			if (requestCode == PICK_VIDEO_REQUEST) {
-				if (data == null) {
-					Toast.makeText(this, "error", Toast.LENGTH_LONG).show();
-				} else {
-					mMediaUri = data.getData();
-				}
-
-				Log.i(TAG, "Media URI: " + mMediaUri);
-				if (requestCode == PICK_VIDEO_REQUEST) {
-					// make sure the file is less than 10 MB
-					int fileSize = 0;
-					InputStream inputStream = null;
-
-					try {
-						inputStream = getContentResolver().openInputStream(
-								mMediaUri);
-						fileSize = inputStream.available();
-					} catch (FileNotFoundException e) {
-						Toast.makeText(this, "file error", Toast.LENGTH_LONG)
-								.show();
-						return;
-					} catch (IOException e) {
-						Toast.makeText(this, "file error", Toast.LENGTH_LONG)
-								.show();
-						return;
-					} finally {
-						try {
-							inputStream.close();
-						} catch (IOException e) { /* Intentionally blank */
-						}
-					}
-
-					if (fileSize >= FILE_SIZE_LIMIT) {
-						Toast.makeText(this, "file too large",
-								Toast.LENGTH_LONG).show();
-						return;
-					}
-				}
-			} else {
-				Intent mediaScanIntent = new Intent(
-						Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-				mediaScanIntent.setData(mMediaUri);
-				sendBroadcast(mediaScanIntent);
+			if (requestCode == PICK_VIDEO_REQUEST||requestCode == TAKE_VIDEO_REQUEST ) {
+					Toast.makeText(this, "only photos for now", Toast.LENGTH_LONG).show();
 			}
-
-			Intent recipientsIntent = new Intent(this, RecipientsActivity.class);
-			recipientsIntent.setData(mMediaUri);
-
-			String fileType;
-			if (requestCode == PICK_PHOTO_REQUEST
-					|| requestCode == TAKE_PHOTO_REQUEST) {
-				fileType = ".png";				
-			} else {
-				fileType = ".mp4";
-			}
+			
 		} else if (resultCode != RESULT_CANCELED) {
 			Toast.makeText(this, "error", Toast.LENGTH_LONG).show();
 		}

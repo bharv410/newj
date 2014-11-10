@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.kidgeniushq.susd.utility.Utility;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class BigView extends Activity {
 	ImageView iv;
@@ -69,7 +71,8 @@ public class BigView extends Activity {
 		}
 	}
 	public void repost(View v){		
-		
+		startActivity(new Intent(this,
+				SendImageActivity.class));
 	}
 	public void tweetItOut(){
 		// Create intent using ACTION_VIEW and a normal Twitter url:
