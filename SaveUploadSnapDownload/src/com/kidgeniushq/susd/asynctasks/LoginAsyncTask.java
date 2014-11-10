@@ -57,7 +57,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, String> {
 			alarm.setAlarm(context);
 
 			// get stories
-			// ((MainActivity)activity).getMyStories();
+			 ((MainActivity)activity).getMyStories();
 
 		} else {
 			Toast.makeText(context, "wrong username or passwoord",

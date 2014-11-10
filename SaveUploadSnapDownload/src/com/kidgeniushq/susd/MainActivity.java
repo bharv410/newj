@@ -34,6 +34,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -358,6 +359,13 @@ public class MainActivity extends FragmentActivity {
 				}
 			}
 		});
+		
+		Button unreadButton=(Button)findViewById(R.id.unreadButton);
+		if(MyApplication.allMyStories.size()>0){
+			unreadButton.setText("Unread ("+MyApplication.allMyStories.size()+")");
+		}else{
+			unreadButton.setText("No unread snaps");
+		}
 	}
 
 	public void sendItOut(View v) {
