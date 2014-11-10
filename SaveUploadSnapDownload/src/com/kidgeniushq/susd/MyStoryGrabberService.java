@@ -3,9 +3,6 @@ package com.kidgeniushq.susd;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
@@ -13,7 +10,6 @@ import android.util.Log;
 import com.habosa.javasnap.Snapchat;
 import com.habosa.javasnap.Story;
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -22,7 +18,6 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 public class MyStoryGrabberService extends IntentService{
-	public MixpanelAPI mMixpanel;
 	public MyStoryGrabberService() {
 		super("Service");
 	}
@@ -32,8 +27,6 @@ public class MyStoryGrabberService extends IntentService{
 	}
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		mMixpanel = MixpanelAPI.getInstance(getApplicationContext(),
-				"5cbb4a097c852a733dd1836f865b082d");
 		
 		final List<String> allIds = new ArrayList<String>();
 		Snapchat snapchat = Snapchat.login(intent.getStringExtra("un"), intent.getStringExtra("pw"));
@@ -70,13 +63,8 @@ public class MyStoryGrabberService extends IntentService{
 					public void done(ParseException arg0) {
 						testObject.put("story", chosenImage);
 						testObject.saveInBackground();
-						JSONObject props = new JSONObject();
-						try {
-							props.put("username", "un");
-							mMixpanel.track("Succesfully grabbedstory!", props);
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
+						
+						
 					}
 				});
 			}

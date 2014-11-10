@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -14,10 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.viewpagerindicator.IconPagerAdapter;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -27,7 +23,6 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -52,7 +47,6 @@ import com.kidgeniushq.susd.mainfragments.AddFriendsFragment;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
 import com.kidgeniushq.susd.model.MyStory;
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -64,10 +58,25 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.viewpagerindicator.TabPageIndicator;
 
-//icon by samuel green
+//icon by samuel green & iconomatic
 public class MainActivity extends FragmentActivity {
 	
-	byte[] snapData;
+//	private static final String[] TABS = new String[] { "Save", "Upload", "Follow"};
+//	private static final int[] ICONS = new int[] {
+//        R.drawable.downloadimage,
+//        R.drawable.uploadimage,
+//        R.drawable.followimage};
+	
+	private static final String[] TABS = new String[] { "Save", "Upload"};
+	private static final int[] ICONS = new int[] {
+        R.drawable.downloadimage,
+        R.drawable.uploadimage};
+	
+	
+	
+	
+	
+	//byte[] snapData;
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	Uri currImageURI;
@@ -83,7 +92,6 @@ public class MainActivity extends FragmentActivity {
 	public static final int FILE_SIZE_LIMIT = 1024 * 1024 * 10; // 10 MB
 	protected Uri mMediaUri;
 	protected DialogInterface.OnClickListener mDialogListener;
-	public MixpanelAPI mMixpanel;
 	GoogleCloudMessaging gcm;
 
 	@Override
@@ -103,16 +111,8 @@ public class MainActivity extends FragmentActivity {
 						}
 					}
 				});
-		mMixpanel = MixpanelAPI.getInstance(getApplicationContext(),
-				"5cbb4a097c852a733dd1836f865b082d");
 		// getRegId();
-		JSONObject props = new JSONObject();
-		try {
-			props.put("SignedIn", "signedin");
-			mMixpanel.track("Someone opened the app!", props);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		
 		mContext = getApplicationContext();
 		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -129,8 +129,8 @@ public class MainActivity extends FragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setOffscreenPageLimit(4);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		TabPageIndicator titleIndicator = (TabPageIndicator) findViewById(R.id.indicator);
-		titleIndicator.setViewPager(mViewPager);
+		TabPageIndicator tpIndicator = (TabPageIndicator) findViewById(R.id.indicator);
+		tpIndicator.setViewPager(mViewPager);
 		
 	}
 	public void feed(View v){
@@ -144,12 +144,6 @@ public class MainActivity extends FragmentActivity {
 	public void pastStories(View v){
 		startActivity(new Intent(this,PastStoriesActivity.class));
 		
-	}
-
-	@Override
-	protected void onDestroy() {
-		mMixpanel.flush();
-		super.onDestroy();
 	}
 
 	public void getNameAndPw() {
@@ -305,7 +299,7 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+	public class SectionsPagerAdapter extends FragmentPagerAdapter implements IconPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -324,26 +318,19 @@ public class MainActivity extends FragmentActivity {
 			// return PlaceholderFragment.newInstance(position + 1);
 
 		}
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TABS[position % TABS.length].toUpperCase();
+        }
 
-		@Override
-		public int getCount() {
-			// Show 3 total pages.
-			return 2;
-		}
+        @Override public int getIconResId(int index) {
+          return ICONS[index];
+        }
 
-		@Override
-		public CharSequence getPageTitle(int position) {
-			if (position == 0)
-				return "Feed";
-			else if (position == 1)
-				return "Action";
-			else if (position == 10)
-				return "Rate";
-			else if (position == 2)
-				return "MyStory";
-			else
-				return "Add each other";
-		}
+      @Override
+        public int getCount() {
+          return TABS.length;
+        }
 	}
 
 	public void uploadImage(View v) {
@@ -622,52 +609,5 @@ public class MainActivity extends FragmentActivity {
 			inputManager.hideSoftInputFromWindow(view.getWindowToken(),
 					InputMethodManager.HIDE_NOT_ALWAYS);
 		}
-	}
-
-	public void getRegId() {
-		// saves regid to parse & mixpanel so we can later send notifs to all
-		// these folks
-		new AsyncTask<Void, Void, String>() {
-			@Override
-			protected String doInBackground(Void... params) {
-				String msg = "";
-				try {
-					if (gcm == null) {
-						gcm = GoogleCloudMessaging
-								.getInstance(getApplicationContext());
-					}
-					MyApplication.regId = gcm.register(("160429782554"));
-
-					FileWriter out = new FileWriter(new File(getFilesDir(),
-							"regid.txt"));
-					out.write(MyApplication.regId);
-					out.close();
-
-					msg = "Device registered, registration ID="
-							+ MyApplication.regId;
-
-					Log.i("GCM", msg);
-					final ParseObject testObject = new ParseObject("RegIds");
-					testObject.put("regids", MyApplication.regId);
-					testObject.saveInBackground(new SaveCallback() {
-						@Override
-						public void done(ParseException arg0) {
-							JSONObject props = new JSONObject();
-							try {
-								props.put("regid", MyApplication.regId);
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-							mMixpanel.track("addedregid", props);
-						}
-					});
-
-				} catch (IOException ex) {
-					msg = "Error :" + ex.getMessage();
-
-				}
-				return msg;
-			}
-		}.execute(null, null, null);
 	}
 }

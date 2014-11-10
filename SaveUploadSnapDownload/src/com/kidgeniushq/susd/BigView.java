@@ -7,14 +7,7 @@ import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
@@ -24,16 +17,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class BigView extends Activity {
 	ImageView iv;
@@ -41,7 +30,6 @@ public class BigView extends Activity {
 	MediaScannerConnection msConn;
 	FileOutputStream fileOutputStream;
 	File file1;
-	MixpanelAPI mMixpanel;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,16 +38,6 @@ public class BigView extends Activity {
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().hide();
 		} 
-		
-		mMixpanel =
-			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
-		JSONObject props = new JSONObject();
-		try {
-		props.put("username", MyApplication.username);
-			mMixpanel.track("Opened Image", props);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 		iv = (ImageView) findViewById(R.id.bigImageView);
 		iv.setImageBitmap(MyApplication.currentBitmap);
 
@@ -91,38 +69,6 @@ public class BigView extends Activity {
 		}
 	}
 	public void repost(View v){		
-		JSONObject props = new JSONObject();
-		try {
-			props.put("SignedIn", "signedin");
-			mMixpanel.track("Reposted image!", props);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				BigView.this);
-				alertDialogBuilder.setTitle("Just one thing!");
-				alertDialogBuilder
-						.setMessage(
-								"All you must do is shout us out on Twitter ONCE to repost photos forever (videos always work)")
-						.setCancelable(false)
-						.setPositiveButton("Okay! I'll do it now!",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										tweetItOut();
-									}
-								})
-						.setNegativeButton(
-								"No thanks. I don't want to easily save photos",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										dialog.cancel();
-									}
-								});
-
-				AlertDialog alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
 		
 	}
 	public void tweetItOut(){
@@ -162,15 +108,6 @@ private class RepostAsyncTask extends AsyncTask<String, Void, Boolean> {
 		protected void onPostExecute(Boolean result) {
 			if(result){
 				Toast.makeText(getApplicationContext(), "Uploaded to your snapchat story!!", Toast.LENGTH_LONG).show();
-				JSONObject props = new JSONObject();
-				try {
-
-				props.put("username", MyApplication.username);
-					props.put("whosstory", MyApplication.currentStory.getSender());
-					mMixpanel.track("Reposted!", props);
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
 			}else{
 				Toast.makeText(getApplicationContext(), "Error reposting ;/", Toast.LENGTH_LONG).show();
 
@@ -211,13 +148,5 @@ private class RepostAsyncTask extends AsyncTask<String, Void, Boolean> {
 
 	public void save(View v) {
 		savePhoto(MyApplication.currentBitmap);
-		
-		JSONObject props = new JSONObject();
-		try {
-			props.put("SignedIn", "signedin");
-			mMixpanel.track("Saved image!", props);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 	}
 }

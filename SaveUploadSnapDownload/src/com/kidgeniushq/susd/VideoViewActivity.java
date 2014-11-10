@@ -5,13 +5,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -27,7 +23,6 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class VideoViewActivity extends Activity {
 	private VideoView myVideoView;
@@ -38,7 +33,6 @@ public class VideoViewActivity extends Activity {
 
 	private MediaController mediaControls;
 	File vidFile;
-	MixpanelAPI mMixPanel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +41,7 @@ public class VideoViewActivity extends Activity {
 		if (android.os.Build.VERSION.SDK_INT>=android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().hide();
 			}
-		mMixPanel =
-			    MixpanelAPI.getInstance(getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
-		JSONObject props = new JSONObject();
-		try {
-
-		props.put("username", MyApplication.username);
-			props.put("whosstory", MyApplication.currentStory.getSender());
-			mMixPanel.track("Opened Video", props);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		
 		if (mediaControls == null) {
 			mediaControls = new MediaController(VideoViewActivity.this);
 		}
@@ -137,13 +121,6 @@ public class VideoViewActivity extends Activity {
 	
 	public void save(View v){
 		
-		JSONObject props = new JSONObject();
-		try {
-			props.put("SignedIn", "signedin");
-			mMixPanel.track("Saved video!", props);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 		String title=MyApplication.currentStory.getSender()+MyApplication.currentStory.getCaption();
 		
 		// Save the name and description of a video in a ContentValues map.  
@@ -186,15 +163,7 @@ public class VideoViewActivity extends Activity {
 		protected void onPostExecute(Boolean result) {
 			if(result){
 				Toast.makeText(getApplicationContext(), "Uploaded to your snapchat story!!", Toast.LENGTH_LONG).show();
-				JSONObject props = new JSONObject();
-				try {
-
-				props.put("username", MyApplication.username);
-					props.put("whosstory", MyApplication.currentStory.getSender());
-					mMixPanel.track("Reposted!", props);
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				
 			}else{
 				Toast.makeText(getApplicationContext(), "Error reposting ;/", Toast.LENGTH_LONG).show();
 

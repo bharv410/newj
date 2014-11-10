@@ -2,9 +2,6 @@ package com.kidgeniushq.susd.mainfragments;
 
 import java.util.ArrayList;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -16,19 +13,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.kidgeniushq.susd.R;
-import com.kidgeniushq.susd.R.layout;
 import com.kidgeniushq.susd.utility.MyApplication;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 public class AddFriendsFragment extends ListFragment {
 	ArrayList<String> populars;
 	ArrayAdapter<String> adapter;
-	MixpanelAPI mMixpanel;
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		mMixpanel=
-				MixpanelAPI.getInstance(getActivity().getApplicationContext(), "5cbb4a097c852a733dd1836f865b082d");
 		
 		populars = new ArrayList<String>();
 		populars.add("VSpink");
@@ -97,14 +89,7 @@ public class AddFriendsFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		JSONObject props = new JSONObject();
-		try {
-			props.put("added friend", populars.get(position));
-			mMixpanel.track("AddedPop", props);
-
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		
 		
 		new AddFriendTask().execute(populars.get(position));
 
