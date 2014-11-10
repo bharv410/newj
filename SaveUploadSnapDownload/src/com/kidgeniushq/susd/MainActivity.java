@@ -59,10 +59,10 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.viewpagerindicator.TabPageIndicator;
 
-//icon by samuel green & iconomatic
+//icon by samuel green & iconomatic & simple icons
 public class MainActivity extends FragmentActivity {
 	
-	private static final String[] TABS = new String[] { "Save", "Upload", "Follow"};
+	private static final String[] TABS = new String[] { "upload ", "download ", "follow"};
 	private static final int[] ICONS = new int[] {
         R.drawable.downloadimage,
         R.drawable.uploadimage,

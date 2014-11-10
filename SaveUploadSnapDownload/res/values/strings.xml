@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+<string name="celebrity_title">Click a celebrities username to follow:</string>
     <string name="app_name">Save Upload Snap Download</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>

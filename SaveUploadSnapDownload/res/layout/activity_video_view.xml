@@ -1,18 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="#FFF" >
 
     <Button
         android:id="@+id/saveVideoButton"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:background="#517fa4"
-        android:textColor="#FFFFFF"
+        android:textColor="#5CADFF"
+        android:background="#FFF"
         android:onClick="save"
-        android:text="Save"
+        android:text="Download To Gallery"
+        android:textStyle="bold"
+        android:drawableRight="@drawable/downloadimage"
+        
          />
 
     <VideoView
@@ -25,12 +28,15 @@
         android:layout_alignParentTop="true" />
 
     <Button
-        android:id="@+id/repostButton"
+        android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/saveVideoButton"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_below="@+id/bigImageView"
+        android:textColor="#5CADFF"
+        android:background="#FFF"
+        android:textStyle="bold"
         android:onClick="repost"
         android:text="REPOST!" />
-
 </RelativeLayout>

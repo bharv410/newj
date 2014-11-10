@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent" 
+    android:background="#5CADFF">
 
     <ListView
         android:id="@android:id/list"
@@ -15,10 +16,13 @@
     <TextView
         android:id="@+id/infoView"
         android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:background="#FFF"
+        android:textColor="#5CADFF"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Click a celebrities username to follow:"
+        android:text="@string/celebrity_title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
