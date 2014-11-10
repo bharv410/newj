@@ -52,7 +52,6 @@ public class FeedFragment extends Fragment {
 	GridView gv; //for images
 	int gridViewNum=0;
 	SnapAdapter sa;
-	public File[] vidFiles;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,17 +96,9 @@ public class FeedFragment extends Fragment {
 					File dir = new File (sdCard.getAbsolutePath() + "/dir1/dir2");
 					dir.mkdirs();
 					File vidFile = new File(dir, "/"+curr+"video.mp4");
-					vidFiles[curr]=vidFile;
-					System.out.println(vidFile.getAbsolutePath());
-					System.out.println(vidFile.getAbsolutePath());
+					MyApplication.vidFiles[curr]=vidFile;
 					System.out.println(vidFile.getAbsolutePath());
 					
-					System.out.println(vidFile.getAbsolutePath());
-					System.out.println(vidFile.getAbsolutePath());
-					System.out.println(vidFile.getAbsolutePath());
-					System.out.println(vidFile.getAbsolutePath());
-					System.out.println(vidFile.getAbsolutePath());
-					System.out.println(vidFile.getAbsolutePath());
 					System.out.println(vidFile.getAbsolutePath());
 					System.out.println(vidFile.getAbsolutePath());
 					System.out.println(vidFile.getAbsolutePath());
@@ -271,13 +262,13 @@ public class FeedFragment extends Fragment {
         ContentValues values = new ContentValues(2);
         values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
         //values.put(MediaStore.Video.Media.DATA, vidFile.getAbsolutePath()); 
-        System.out.print(vidFiles[index].getAbsolutePath());
+        System.out.print(MyApplication.vidFiles[index].getAbsolutePath());
         // Add a new record (identified by uri) without the video, but with the values just set.
         Uri uri = getActivity().getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
 
         // Now get a handle to the file for that record, and save the data into it.
         try {
-            InputStream is = new FileInputStream(vidFiles[index]);
+            InputStream is = new FileInputStream(MyApplication.vidFiles[index]);
             OutputStream os = getActivity().getContentResolver().openOutputStream(uri);
             byte[] buffer = new byte[4096]; // tweaking this number may increase performance
             int len;

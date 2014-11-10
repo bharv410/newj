@@ -35,11 +35,10 @@ public class GetStoriesAsyncTask extends AsyncTask<String, Void, String> {
 		    @Override
 		    protected void onPostExecute(String result) {
 		    	if(MyApplication.stories.length>0){
-		    	Toast.makeText(context, "got " +MyApplication.stories.length + " stories", Toast.LENGTH_SHORT).show();
 		    	FragmentActivity thisActivity=(FragmentActivity)activity;
 		    	FeedFragment mystorysfrag = (FeedFragment)thisActivity.getSupportFragmentManager().findFragmentByTag(
 		                "android:switcher:"+R.id.pager+":0");
-		    	mystorysfrag.vidFiles=new File[MyApplication.stories.length];
+		    	MyApplication.vidFiles=new File[MyApplication.stories.length]; //all vid files saved
 				mystorysfrag.addImagesToScreen();
 				MyApplication.friendsNames.add("My Story");
 				//save unread to gallery

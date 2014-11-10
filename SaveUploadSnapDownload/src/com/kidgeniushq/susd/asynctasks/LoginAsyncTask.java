@@ -54,7 +54,7 @@ String[] welcomeMessages;
     	alarm.setAlarm(context);
     	
     	//get stories
-    	((MainActivity)activity).getMyStories();
+    	//((MainActivity)activity).getMyStories();
     	
     	}else{
     		Toast.makeText(context, "wrong username or passwoord", Toast.LENGTH_SHORT).show();

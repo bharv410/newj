@@ -1,5 +1,6 @@
 package com.kidgeniushq.susd.utility;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.parse.PushService;
 
 public class MyApplication extends Application {
 	//static variables for fragments to use
+	public static File[] vidFiles;
 		public static String username, password;
 		public static ArrayList<MyStory> allMyStories;
 		public static Snap[] allMySnaps;

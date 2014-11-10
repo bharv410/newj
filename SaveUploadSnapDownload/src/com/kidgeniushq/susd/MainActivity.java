@@ -43,8 +43,9 @@ import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
-import com.kidgeniushq.susd.mainfragments.AddFriendsFragment;
+import com.kidgeniushq.susd.mainfragments.AddPopularFragment;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
+import com.kidgeniushq.susd.mainfragments.UploadFragment;
 import com.kidgeniushq.susd.model.MyStory;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.parse.FindCallback;
@@ -61,20 +62,11 @@ import com.viewpagerindicator.TabPageIndicator;
 //icon by samuel green & iconomatic
 public class MainActivity extends FragmentActivity {
 	
-//	private static final String[] TABS = new String[] { "Save", "Upload", "Follow"};
-//	private static final int[] ICONS = new int[] {
-//        R.drawable.downloadimage,
-//        R.drawable.uploadimage,
-//        R.drawable.followimage};
-	
-	private static final String[] TABS = new String[] { "Save", "Upload"};
+	private static final String[] TABS = new String[] { "Save", "Upload", "Follow"};
 	private static final int[] ICONS = new int[] {
         R.drawable.downloadimage,
-        R.drawable.uploadimage};
-	
-	
-	
-	
+        R.drawable.uploadimage,
+        R.drawable.followimage};
 	
 	//byte[] snapData;
 	SectionsPagerAdapter mSectionsPagerAdapter;
@@ -310,8 +302,10 @@ public class MainActivity extends FragmentActivity {
 			
 			if (position == 0)
 				return new FeedFragment();
+			else if(position==1)
+				return new UploadFragment();
 			else 
-				return new AddFriendsFragment();
+				return new AddPopularFragment();
 			// else if (position == 2)
 			// return new MyStoryGridFragment();
 			// else

@@ -33,7 +33,6 @@ public class SaveUnreadTask extends AsyncTask<Void,Void,Boolean>{
 		try{
 			if(count>0){
 		Toast.makeText(MainActivity.mContext, "got "+count+" unread snaps !!", Toast.LENGTH_LONG).show();
-		Toast.makeText(MainActivity.mContext, "go to last page to check "+count+" unread snaps !!", Toast.LENGTH_LONG).show();
 			}}catch(Exception e){
 	}
 	}
