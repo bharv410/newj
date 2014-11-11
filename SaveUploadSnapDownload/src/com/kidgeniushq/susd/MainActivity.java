@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -32,17 +34,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
+import com.kidgeniushq.susd.customui.PullRefreshContainerView;
+import com.kidgeniushq.susd.customui.PullRefreshContainerView.OnChangeStateListener;
 import com.kidgeniushq.susd.mainfragments.AddPopularFragment;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
 import com.kidgeniushq.susd.mainfragments.UploadFragment;
@@ -72,6 +79,7 @@ public class MainActivity extends FragmentActivity {
         R.drawable.uploadimage,
         R.drawable.followimage};
 	DisplayImageOptions options;
+	
 	//byte[] snapData;
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
@@ -90,7 +98,6 @@ public class MainActivity extends FragmentActivity {
 	protected DialogInterface.OnClickListener mDialogListener;
 	GoogleCloudMessaging gcm;
 	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -136,7 +143,7 @@ public class MainActivity extends FragmentActivity {
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		TabPageIndicator tpIndicator = (TabPageIndicator) findViewById(R.id.indicator);
 		tpIndicator.setViewPager(mViewPager);
-		
+	        
 	}
 	public void feed(View v){
 		mViewPager.setCurrentItem(0);
@@ -362,7 +369,7 @@ public class MainActivity extends FragmentActivity {
 		
 		Button unreadButton=(Button)findViewById(R.id.unreadButton);
 		if(MyApplication.allMyStories.size()>0){
-			unreadButton.setText("Unread ("+MyApplication.allMyStories.size()+")");
+			unreadButton.setText("Unread ("+MyApplication.unreadSenders.size()+")");
 		}else{
 			unreadButton.setText("No unread snaps");
 		}
@@ -575,6 +582,6 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 	public void search(View v){
-		startActivity(new Intent(this,SearchFriendsActivity.class));
+		Toast.makeText(getApplicationContext(), "pull down to search", Toast.LENGTH_SHORT).show();
 	}
 }

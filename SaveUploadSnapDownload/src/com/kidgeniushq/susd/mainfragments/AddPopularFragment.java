@@ -75,7 +75,10 @@ public class AddPopularFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		
-		new AddFriendTask().execute(populars.get(position));
+		if(!MyApplication.friendsNames.contains(populars.get(position)))
+			new AddFriendTask().execute(populars.get(position));
+		else
+			Toast.makeText(getActivity(), "Already added", Toast.LENGTH_LONG).show();
 
 	}
 

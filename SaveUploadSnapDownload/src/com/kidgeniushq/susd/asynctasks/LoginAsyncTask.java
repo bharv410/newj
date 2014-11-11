@@ -26,7 +26,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, String> {
 		context = ctx;
 		activity = act;
 		welcomeMessages = new String[5];
-		welcomeMessages[0] = "Please rate nicely in app store & leave suggestions for next week's improvements : )";
+		welcomeMessages[0] = "Wait one moment";
 	}
 
 	@Override
