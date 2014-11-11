@@ -143,12 +143,14 @@ public class VideoViewActivity extends Activity {
             os.flush();
             is.close();
             os.close();
+            Toast.makeText(getApplicationContext(), "Saved to folder dir2!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Log.e("Video activity", "exception while writing video: ", e);
+            Toast.makeText(getApplicationContext(), "Error!", Toast.LENGTH_SHORT).show();
         } 
 
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-        Toast.makeText(getApplicationContext(), "Saved to folder dir2!", Toast.LENGTH_SHORT).show();
+        
 	}
 	
 	private class RepostAsyncTask extends AsyncTask<String, Void, Boolean> {
