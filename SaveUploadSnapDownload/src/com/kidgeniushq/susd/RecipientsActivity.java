@@ -5,11 +5,14 @@ import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -32,6 +35,7 @@ import android.widget.Toast;
 
 import com.kidgeniushq.susd.adapters.UserAdapter;
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.parse.ParseAnalytics;
 
 public class RecipientsActivity extends Activity {
 
@@ -41,6 +45,7 @@ public class RecipientsActivity extends Activity {
 	protected String mFileType;
 	protected GridView mGridView;
 	// private AdView mAdView;
+	ProgressDialog progress;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +90,10 @@ public class RecipientsActivity extends Activity {
 			recipients = getRecipientIds();
 			// if(recipients.contains("My Story"))
 			// new UploadStoryAsyncTask().execute();
+			
 			new SendToFriendsAsyncTask().execute();
+			progress = ProgressDialog.show(this, "Sending...",
+					"wait just a quick second", true);
 		}
 	public class SendToFriendsAsyncTask extends
 			AsyncTask<String, Void, Boolean> {
@@ -99,16 +107,23 @@ public class RecipientsActivity extends Activity {
 				story = false;
 			}
 
-			boolean video = false;
-
 			
-				return MyApplication.snapchat.sendSnap(new File(getFilesDir(),"uploadimage.jpeg"), recipients, video,
+			if(getIntent().getStringExtra("type").equals("vid")){
+				return MyApplication.snapchat.sendSnap(new File(MyApplication.currentFileSendPath), recipients, true,
 						story, 10);
-			
+			}else{
+				Map<String, String> dimensions = new HashMap<String, String>();
+				dimensions.put("saved", MyApplication.username);
+				ParseAnalytics.trackEvent("PHOTOSENT", dimensions);
+				return MyApplication.snapchat.sendSnap(new File(getFilesDir(),"uploadimage.jpeg"), recipients, false,
+						story, 10);
+				
+			}
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+			progress.dismiss();
 			if (result) {
 				Toast tst = Toast.makeText(getApplicationContext(), "Sent",
 						Toast.LENGTH_SHORT);

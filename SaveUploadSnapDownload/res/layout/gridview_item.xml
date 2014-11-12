@@ -19,6 +19,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="15dp"
+        android:gravity="center"
         android:textColor="@android:color/white" />
 
 </FrameLayout>

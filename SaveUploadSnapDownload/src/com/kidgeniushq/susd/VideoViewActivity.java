@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.parse.ParseAnalytics;
 
 public class VideoViewActivity extends Activity {
 	private VideoView myVideoView;
@@ -38,6 +41,10 @@ public class VideoViewActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_video_view);
+		
+		Map<String, String> dimensions = new HashMap<String, String>();
+		dimensions.put("saved", MyApplication.username);
+		ParseAnalytics.trackEvent("viewedvideo", dimensions);
 		if (android.os.Build.VERSION.SDK_INT>=android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().hide();
 			}
@@ -117,16 +124,22 @@ public class VideoViewActivity extends Activity {
 	public void repost(View v){
 		save(findViewById(R.layout.activity_video_view));
 		new RepostAsyncTask().execute();
+		Map<String, String> dimensions = new HashMap<String, String>();
+		dimensions.put("saved", MyApplication.username);
+		ParseAnalytics.trackEvent("repoistvideo", dimensions);
 	}
 	
 	public void save(View v){
+		Map<String, String> dimensions = new HashMap<String, String>();
+		dimensions.put("saved", MyApplication.username);
+		ParseAnalytics.trackEvent("savedvideo", dimensions);
 		
 		String title=MyApplication.currentStory.getSender()+MyApplication.currentStory.getCaption();
 		
 		// Save the name and description of a video in a ContentValues map.  
         ContentValues values = new ContentValues(2);
         values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
-        //values.put(MediaStore.Video.Media.DATA, vidFile.getAbsolutePath()); 
+        values.put(MediaStore.Video.Media.DATA, vidFile.getAbsolutePath()); 
         System.out.print(vidFile.getAbsolutePath());
         // Add a new record (identified by uri) without the video, but with the values just set.
         Uri uri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
@@ -150,7 +163,6 @@ public class VideoViewActivity extends Activity {
         } 
 
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-        
 	}
 	
 	private class RepostAsyncTask extends AsyncTask<String, Void, Boolean> {

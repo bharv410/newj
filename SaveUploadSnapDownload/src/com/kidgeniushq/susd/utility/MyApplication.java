@@ -22,7 +22,7 @@ import com.parse.PushService;
 public class MyApplication extends Application {
 	//static variables for fragments to use
 	public static File[] vidFiles;
-		public static String username, password,currentFriend;
+		public static String username, password,currentFriend,currentFileSendPath;
 		public static ArrayList<MyStory> allMyStories;
 		public static Snap[] allMySnaps;
 		public static Snapchat snapchat;
@@ -37,7 +37,7 @@ public class MyApplication extends Application {
 		public static ArrayList<String> friendsNames,unreadSenders;
 		public static int vidIndex;//fixes bug for vids
 		public static int gridX,gridY;
-		public static HashMap<String,Bitmap> myUnreads;
+		public static HashMap<String,byte[]> myUnreads;
 		final String PROPERTY_ID ="UA-52625155-3";
 	@Override
 	public void onCreate(){
@@ -47,13 +47,9 @@ public class MyApplication extends Application {
 		addedImageToMyStory=0;
 		friendsNames= new ArrayList<String>();
 		unreadSenders= new ArrayList<String>();
-		myUnreads= new HashMap<String,Bitmap>();
+		myUnreads= new HashMap<String,byte[]>();
 		Parse.initialize(this, "NSi9jWGJWQnWljIOtGjOXtvPpKIwefhpVdq9SlOb", "LOPmGbcEfYol9Gl5zjVJShBrJb03qmKAVWRtX2i1");
 		  // Also in this method, specify a default Activity to handle push notifications
 		  PushService.setDefaultPushCallback(this, MainActivity.class);
-		
-		// Create global configuration and initialize ImageLoader with this config
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
-        ImageLoader.getInstance().init(config);
         }
 }

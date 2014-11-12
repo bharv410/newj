@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -34,22 +34,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.kidgeniushq.susd.asynctasks.LoginAsyncTask;
 import com.kidgeniushq.susd.asynctasks.UploadStoryAsyncTask;
-import com.kidgeniushq.susd.customui.PullRefreshContainerView;
-import com.kidgeniushq.susd.customui.PullRefreshContainerView.OnChangeStateListener;
 import com.kidgeniushq.susd.mainfragments.AddPopularFragment;
 import com.kidgeniushq.susd.mainfragments.FeedFragment;
 import com.kidgeniushq.susd.mainfragments.UploadFragment;
@@ -60,6 +55,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
+import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseInstallation;
@@ -72,15 +68,14 @@ import com.viewpagerindicator.TabPageIndicator;
 
 //icon by samuel green & iconomatic & simple icons & Кирилл Конюх
 public class MainActivity extends FragmentActivity {
-	
-	private static final String[] TABS = new String[] { "download ", "upload ", "follow"};
-	private static final int[] ICONS = new int[] {
-        R.drawable.downloadimage,
-        R.drawable.uploadimage,
-        R.drawable.followimage};
+
+	private static final String[] TABS = new String[] { "download ", "upload ",
+			"follow" };
+	private static final int[] ICONS = new int[] { R.drawable.downloadimage,
+			R.drawable.uploadimage, R.drawable.followimage };
 	DisplayImageOptions options;
-	
-	//byte[] snapData;
+
+	// byte[] snapData;
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	Uri currImageURI;
@@ -97,43 +92,41 @@ public class MainActivity extends FragmentActivity {
 	protected Uri mMediaUri;
 	protected DialogInterface.OnClickListener mDialogListener;
 	GoogleCloudMessaging gcm;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		ParseAnalytics.trackAppOpened(getIntent());
 		// Save the current Installation to Parse.
-				ParseInstallation.getCurrentInstallation().saveInBackground();
-				ParsePush.subscribeInBackground("", new SaveCallback() {
-					@Override
-					public void done(ParseException e) {
-						if (e != null) {
-							Log.d("com.parse.push",
-									"successfully subscribed to the broadcast channel.");
-						} else {
-							Log.e("com.parse.push", "failed to subscribe for push", e);
-						}
-					}
-				});
+		ParseInstallation.getCurrentInstallation().saveInBackground();
+		ParsePush.subscribeInBackground("", new SaveCallback() {
+			@Override
+			public void done(ParseException e) {
+				if (e != null) {
+					Log.d("com.parse.push",
+							"successfully subscribed to the broadcast channel.");
+				} else {
+					Log.e("com.parse.push", "failed to subscribe for push", e);
+				}
+			}
+		});
 		// getRegId();
-				options = new DisplayImageOptions.Builder()
+		options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.avatar_empty)
 				.showImageForEmptyUri(R.drawable.avatar_empty)
-				.showImageOnFail(R.drawable.avatar_empty)
-				.cacheInMemory(true) 
-				.cacheOnDisk(true) 
-				.considerExifParams(true) 
-				.bitmapConfig(Bitmap.Config.RGB_565)
-				.build(); 
+				.showImageOnFail(R.drawable.avatar_empty).cacheInMemory(true)
+				.cacheOnDisk(true).considerExifParams(true)
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
 		mContext = getApplicationContext();
 		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().hide();
 		}
 		// this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-		try{
+		try {
 			getNameAndPw();
-		}catch(Exception e){
+		} catch (Exception e) {
 			System.out.println("stories getting error");
 		}
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
@@ -143,19 +136,20 @@ public class MainActivity extends FragmentActivity {
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		TabPageIndicator tpIndicator = (TabPageIndicator) findViewById(R.id.indicator);
 		tpIndicator.setViewPager(mViewPager);
-	        
+
 	}
-	public void feed(View v){
+
+	public void feed(View v) {
 		mViewPager.setCurrentItem(0);
 	}
-	
-	public void unread(View v){
-		startActivity(new Intent(this,UnreadActivity.class));
+
+	public void unread(View v) {
+		startActivity(new Intent(this, UnreadActivity.class));
 	}
-	
-	public void pastStories(View v){
-		startActivity(new Intent(this,PastStoriesActivity.class));
-		
+
+	public void pastStories(View v) {
+		startActivity(new Intent(this, PastStoriesActivity.class));
+
 	}
 
 	public void getNameAndPw() {
@@ -177,12 +171,12 @@ public class MainActivity extends FragmentActivity {
 				System.out.println(line);
 				MyApplication.password = line;
 			}
-
+			if(!MyApplication.username.equals("abcdefgh")){
 			LoginAsyncTask lat = new LoginAsyncTask(getApplicationContext(),
 					MainActivity.this);
 			lat.execute(MyApplication.username, MyApplication.password);
 			return;
-
+			}
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
 		} catch (IOException e) {
@@ -193,6 +187,46 @@ public class MainActivity extends FragmentActivity {
 		login();
 	}
 
+	public void logout(View v) {
+		FeedFragment mystorysfrag = (FeedFragment)getSupportFragmentManager().findFragmentByTag(
+                "android:switcher:"+R.id.pager+":0");
+		mystorysfrag.cancelAsyncTask();
+		MyApplication.gridX = 0;
+		MyApplication.gridY = 0;
+		MyApplication.addedImageToMyStory = 0;
+		MyApplication.friendsNames = null;
+		MyApplication.unreadSenders = null;
+		MyApplication.myUnreads = null;
+		MyApplication.gridX=0;
+		MyApplication.gridY=0;
+		MyApplication.addedImageToMyStory=0;
+		MyApplication.friendsNames= new ArrayList<String>();
+		MyApplication.unreadSenders= new ArrayList<String>();
+		MyApplication.myUnreads= new HashMap<String,byte[]>();
+		MyApplication.allMyStories = null;
+		MyApplication.allMySnaps = null;
+		MyApplication.imageList = null;
+		MyApplication.addedImageToMyStory = 0;
+		
+		
+
+		FileWriter out;
+		try {
+			out = new FileWriter(new File(getFilesDir(), "username.txt"));
+
+			out.write("abcdefgh");
+			out.close();
+
+			out = new FileWriter(new File(getFilesDir(), "password.txt"));
+			out.write("abcdefgh");
+			out.close();
+			finish();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		android.os.Process.killProcess(android.os.Process.myPid());
+	}
+
 	public void login() {
 		// MyApplication.username = "boutmabenjamins";
 		// MyApplication.password = "iforgot05";
@@ -201,7 +235,7 @@ public class MainActivity extends FragmentActivity {
 		// lat.execute(MyApplication.username, MyApplication.password);
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
-		alertDialog.setTitle("Login");
+		alertDialog.setTitle("Enter Snapchat Login");
 		final EditText quantity = new EditText(MainActivity.this);
 		final EditText lot = new EditText(MainActivity.this);
 
@@ -238,30 +272,84 @@ public class MainActivity extends FragmentActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (resultCode == RESULT_OK) {
-			//PICKED A PHOTO
-			if (requestCode == PICK_PHOTO_REQUEST || requestCode == TAKE_PHOTO_REQUEST){
+			// PICKED A PHOTO
+			if (requestCode == PICK_PHOTO_REQUEST
+					|| requestCode == TAKE_PHOTO_REQUEST) {
 				if (data == null) {
 					Toast.makeText(this, "error", Toast.LENGTH_LONG).show();
 				} else {
 					mMediaUri = data.getData();
-					MyApplication.currentBitmap=ImageLoader.getInstance().loadImageSync("file:///"+Utility.getPath(getApplicationContext(), mMediaUri), options);
+					MyApplication.currentBitmap = ImageLoader.getInstance()
+							.loadImageSync(
+									"file:///"
+											+ Utility.getPath(
+													getApplicationContext(),
+													mMediaUri), options);
 					startActivity(new Intent(MainActivity.this,
 							SendImageActivity.class));
 					return;
 				}
 			}
-						
-			//PICKEDA VIDEO
-			if (requestCode == PICK_VIDEO_REQUEST||requestCode == TAKE_VIDEO_REQUEST ) {
-					Toast.makeText(this, "only photos for now", Toast.LENGTH_LONG).show();
+
+			if (requestCode == PICK_VIDEO_REQUEST) {
+				mMediaUri = data.getData();
+
+				// // make sure the file is less than 10 MB
+				int fileSize = 0;
+				InputStream inputStream = null;
+
+				try {
+					inputStream = getContentResolver().openInputStream(
+							mMediaUri);
+					fileSize = inputStream.available();
+				} catch (FileNotFoundException e) {
+					Toast.makeText(this, "file error", Toast.LENGTH_LONG)
+							.show();
+					return;
+				} catch (IOException e) {
+					Toast.makeText(this, "file error", Toast.LENGTH_LONG)
+							.show();
+					return;
+				} finally {
+					try {
+						inputStream.close();
+					} catch (IOException e) { /* Intentionally blank */
+					}
+				}
+
+				if (fileSize >= FILE_SIZE_LIMIT) {
+					Toast.makeText(this, "file too large", Toast.LENGTH_LONG)
+							.show();
+					return;
+				} else {
+					// scan vid so android recognizes it
+					Intent mediaScanIntent = new Intent(
+							Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+					mediaScanIntent.setData(mMediaUri);
+					sendBroadcast(mediaScanIntent);
+
+					// set filepath and send it
+					MyApplication.currentFileSendPath = Utility.getPath(
+							getApplicationContext(), mMediaUri);
+					Intent i = new Intent(MainActivity.this,RecipientsActivity.class);
+					i.putExtra("type", "vid");
+					startActivity(i);
+					return;
+				}
 			}
-			
+
+			if (requestCode == TAKE_VIDEO_REQUEST) {
+				Toast.makeText(this, "only choose for now", Toast.LENGTH_LONG)
+						.show();
+			}
+
 		} else if (resultCode != RESULT_CANCELED) {
 			Toast.makeText(this, "error", Toast.LENGTH_LONG).show();
 		}
 	}
 
-	public class SectionsPagerAdapter extends FragmentPagerAdapter implements IconPagerAdapter {
+	public class SectionsPagerAdapter extends FragmentPagerAdapter implements
+			IconPagerAdapter {
 
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -269,12 +357,12 @@ public class MainActivity extends FragmentActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			
+
 			if (position == 0)
 				return new FeedFragment();
-			else if(position==1)
+			else if (position == 1)
 				return new UploadFragment();
-			else 
+			else
 				return new AddPopularFragment();
 			// else if (position == 2)
 			// return new MyStoryGridFragment();
@@ -282,22 +370,27 @@ public class MainActivity extends FragmentActivity {
 			// return PlaceholderFragment.newInstance(position + 1);
 
 		}
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return TABS[position % TABS.length].toUpperCase();
-        }
 
-        @Override public int getIconResId(int index) {
-          return ICONS[index];
-        }
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return TABS[position % TABS.length].toUpperCase();
+		}
 
-      @Override
-        public int getCount() {
-          return TABS.length;
-        }
+		@Override
+		public int getIconResId(int index) {
+			return ICONS[index];
+		}
+
+		@Override
+		public int getCount() {
+			return TABS.length;
+		}
 	}
 
 	public void uploadImage(View v) {
+		Map<String, String> dimensions = new HashMap<String, String>();
+		dimensions.put("saved", MyApplication.username);
+		ParseAnalytics.trackEvent("clicked sendphoto", dimensions);
 		// set listener for the caption
 		// final EditText txtEdit = (EditText)
 		// findViewById(R.id.captionEditText);
@@ -313,12 +406,18 @@ public class MainActivity extends FragmentActivity {
 		// startActivity(new Intent(this,SendImageActivity.class));
 
 		// 3rd time
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		setupDialogListener();
-		builder.setItems(new String[] { "Take Pic", "Take Vid", "Choose Pic",
-				"Choose Vid" }, mDialogListener);
-		AlertDialog dialog = builder.create();
-		dialog.show();
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		setupDialogListener();
+//		builder.setItems(new String[] { "Take Pic", "Take Vid", "Choose Pic",
+//				"Choose Vid" }, mDialogListener);
+//		AlertDialog dialog = builder.create();
+//		dialog.show();
+		// Choose picture
+		Intent choosePhotoIntent = new Intent(
+				Intent.ACTION_GET_CONTENT);
+		choosePhotoIntent.setType("image/*");
+		startActivityForResult(choosePhotoIntent,
+				PICK_PHOTO_REQUEST);
 	}
 
 	// public void uploadVideo(View v) {
@@ -366,11 +465,12 @@ public class MainActivity extends FragmentActivity {
 				}
 			}
 		});
-		
-		Button unreadButton=(Button)findViewById(R.id.unreadButton);
-		if(MyApplication.allMyStories.size()>0){
-			unreadButton.setText("Unread ("+MyApplication.unreadSenders.size()+")");
-		}else{
+
+		Button unreadButton = (Button) findViewById(R.id.unreadButton);
+		if (MyApplication.allMyStories.size() > 0) {
+			unreadButton.setText("Unread ("
+					+ MyApplication.unreadSenders.size() + ")");
+		} else {
 			unreadButton.setText("No unread snaps");
 		}
 	}
@@ -477,8 +577,6 @@ public class MainActivity extends FragmentActivity {
 					Intent chooseVideoIntent = new Intent(
 							Intent.ACTION_GET_CONTENT);
 					chooseVideoIntent.setType("video/*");
-					Toast.makeText(MainActivity.this, "video too large",
-							Toast.LENGTH_LONG).show();
 					startActivityForResult(chooseVideoIntent,
 							PICK_VIDEO_REQUEST);
 					break;
@@ -581,7 +679,8 @@ public class MainActivity extends FragmentActivity {
 					InputMethodManager.HIDE_NOT_ALWAYS);
 		}
 	}
-	public void search(View v){
-		Toast.makeText(getApplicationContext(), "pull down to search", Toast.LENGTH_SHORT).show();
+
+	public void search(View v) {
+		startActivity(new Intent(this,SearchFriendsActivity.class));
 	}
 }

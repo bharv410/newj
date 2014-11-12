@@ -49,7 +49,10 @@ public class SendImageActivity extends Activity {
 					60, fOut);
 			fOut.flush();
 			fOut.close();
-			startActivity(new Intent(this, RecipientsActivity.class));
+			Intent i = new Intent(SendImageActivity.this,RecipientsActivity.class);
+			i.putExtra("type", "pic");
+			startActivity(i);
+		
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

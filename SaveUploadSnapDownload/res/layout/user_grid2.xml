@@ -50,6 +50,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:onClick="sendOut"
-        android:text="send" />
+        android:text="send"
+        android:background="#5CADFF" />
     
 </RelativeLayout>

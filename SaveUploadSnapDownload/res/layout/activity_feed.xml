@@ -3,13 +3,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#FFFFFF" >
-    
-    <com.kidgeniushq.susd.customui.PullRefreshContainerView
-        android:id="@+id/container"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-       
-
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
@@ -38,5 +31,4 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:visibility="invisible" />
-</com.kidgeniushq.susd.customui.PullRefreshContainerView>
 </RelativeLayout>

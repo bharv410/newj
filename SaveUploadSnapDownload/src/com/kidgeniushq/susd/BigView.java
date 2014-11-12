@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.Utility;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.parse.ParseAnalytics;
 
 public class BigView extends Activity {
 	ImageView iv;
@@ -42,7 +45,9 @@ public class BigView extends Activity {
 		} 
 		iv = (ImageView) findViewById(R.id.bigImageView);
 		iv.setImageBitmap(MyApplication.currentBitmap);
-
+		Map<String, String> dimensions = new HashMap<String, String>();
+		dimensions.put("saved", MyApplication.username);
+		ParseAnalytics.trackEvent("viewedphoto", dimensions);
 	}
 
 
@@ -73,6 +78,9 @@ public class BigView extends Activity {
 	public void repost(View v){		
 		startActivity(new Intent(this,
 				SendImageActivity.class));
+		Map<String, String> dimensions = new HashMap<String, String>();
+		dimensions.put("saved", MyApplication.username);
+		ParseAnalytics.trackEvent("repostphoto", dimensions);
 	}
 	public void tweetItOut(){
 		// Create intent using ACTION_VIEW and a normal Twitter url:
@@ -151,5 +159,8 @@ private class RepostAsyncTask extends AsyncTask<String, Void, Boolean> {
 
 	public void save(View v) {
 		savePhoto(MyApplication.currentBitmap);
+		Map<String, String> dimensions = new HashMap<String, String>();
+		dimensions.put("saved", MyApplication.username);
+		ParseAnalytics.trackEvent("savedphoto", dimensions);
 	}
 }

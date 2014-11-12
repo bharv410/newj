@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -31,19 +29,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.habosa.javasnap.Snapchat;
@@ -52,8 +46,6 @@ import com.kidgeniushq.susd.BigView;
 import com.kidgeniushq.susd.R;
 import com.kidgeniushq.susd.VideoViewActivity;
 import com.kidgeniushq.susd.adapters.SnapAdapter;
-import com.kidgeniushq.susd.customui.PullRefreshContainerView;
-import com.kidgeniushq.susd.customui.PullRefreshContainerView.OnChangeStateListener;
 import com.kidgeniushq.susd.utility.MyApplication;
 import com.kidgeniushq.susd.utility.Utility;
 
@@ -62,8 +54,7 @@ public class FeedFragment extends Fragment {
 	int gridViewNum=0;
 	SnapAdapter sa;
 	ProgressBar feedProgressBar;
-	private PullRefreshContainerView mContainerView;
-    private TextView mRefreshHeader;
+	GetSnap gs;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -173,56 +164,9 @@ public class FeedFragment extends Fragment {
 				feedProgressBar.setVisibility(View.INVISIBLE);
 			
 			if (MyApplication.imageList==null) {
-				
+				gv=(GridView)getActivity().findViewById(R.id.gridview);
 				MyApplication.imageList = new ArrayList<Bitmap>();
 				
-				//set pull to refresh gridview
-				mRefreshHeader = new TextView(getActivity());
-		        mRefreshHeader.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		        mRefreshHeader.setGravity(Gravity.CENTER);
-		        mRefreshHeader.setText(" ");
-		 
-		        mContainerView = (PullRefreshContainerView)getActivity().findViewById(R.id.container);
-		        mContainerView.setList(((GridView)getActivity().findViewById(R.id.gridview)));
-		        mContainerView.setRefreshHeader(mRefreshHeader);
-		        mContainerView.setOnChangeStateListener(new OnChangeStateListener() {
-		            @Override 
-		            public void onChangeState(PullRefreshContainerView container, int state) {
-		            	 RelativeLayout rl=(RelativeLayout)getActivity().findViewById(R.id.feedLayout);
-		                switch (state) {
-		                case PullRefreshContainerView.STATE_IDLE: 
-		                case PullRefreshContainerView.STATE_PULL: 
-		                    mRefreshHeader.setText(".^.");
-		                   
-		                    rl.setBackgroundColor(Color.parseColor("#5CADFF"));
-		                    break; 
-		                case PullRefreshContainerView.STATE_RELEASE: 
-		                    mRefreshHeader.setText(".^.");
-		                    rl.setBackgroundColor(Color.parseColor("#FFFFFF"));
-		                    break; 
-		                case PullRefreshContainerView.STATE_LOADING: 
-		                    mRefreshHeader.setText("^");
-		                    rl.setBackgroundColor(Color.parseColor("#FFFFFF"));
-		                    final Timer t = new Timer();
-		                    t.schedule(new TimerTask() {
-		 
-		                        @Override 
-		                        public void run() { 
-		                           getActivity().runOnUiThread(new Runnable() {
-		                                @Override 
-		                                public void run() { 
-		                                    gv.smoothScrollToPosition(gridViewNum-1);
-		                                    mContainerView.completeRefresh();
-		                                    t.cancel();
-		                                } 
-		                            }); 
-		                        } 
-		                    }, 2000, 2000); 
-		                    break; 
-		                } 
-		            } 
-		        }); 
-				gv=mContainerView.getList();
 				gv.setOnItemClickListener(new OnItemClickListener() {
 			        @Override
 			        public void onItemClick(AdapterView<?> parent, View v,
@@ -256,15 +200,18 @@ public class FeedFragment extends Fragment {
 				sa.notifyDataSetChanged();
 			}
 			MyApplication.requestInProgress = false;
+			gridViewNum++;
 		}
 	}
 	
 	public void addImagesToScreen(){
-			for(int i=0; i<10;i++){
-				GetSnap gs = new GetSnap(gridViewNum);
+		 gs = new GetSnap(gridViewNum);
 				gs.execute();
-				gridViewNum++;
-			}
+				
+			
+	}
+	public void cancelAsyncTask(){
+		gs.cancel(true);
 	}
 	
 	public Bitmap drawTextToBitmap(Context mContext,  Bitmap bitmap,  String mText) {
@@ -316,7 +263,6 @@ public class FeedFragment extends Fragment {
 	    		   }catch(Exception e){
 	    			   getActivity().finish();
 	    		   }
-	    		   gridViewNum++;
 	    	   }
 	        }
 		@Override

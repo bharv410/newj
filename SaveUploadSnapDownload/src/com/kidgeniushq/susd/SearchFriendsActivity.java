@@ -1,5 +1,8 @@
 package com.kidgeniushq.susd;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.kidgeniushq.susd.utility.MyApplication;
+import com.parse.ParseAnalytics;
 
 public class SearchFriendsActivity extends ListActivity {
 	ArrayAdapter<String> adapter;
@@ -20,6 +24,9 @@ public class SearchFriendsActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search_friends);
+		Map<String, String> dimensions = new HashMap<String, String>();
+		dimensions.put("saved", MyApplication.username);
+		ParseAnalytics.trackEvent("searchfriends", dimensions);
 		int currentAPIVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentAPIVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().hide();

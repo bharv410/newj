@@ -16,13 +16,24 @@
     <TextView
         android:id="@+id/infoView"
         android:layout_width="wrap_content"
-        android:textStyle="bold"
-        android:background="#FFF"
-        android:textColor="#5CADFF"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/buttonLogout"
+        android:background="#FFF"
         android:text="@string/celebrity_title"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#5CADFF"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/buttonLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@android:id/list"
+        android:layout_alignParentRight="true"
+        android:text="logout"
+        android:background="#5CADFF"
+        android:onClick="logout" />
 
 </RelativeLayout>

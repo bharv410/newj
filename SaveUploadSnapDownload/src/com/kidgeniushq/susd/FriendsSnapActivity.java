@@ -189,10 +189,12 @@ public class FriendsSnapActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(String result) {
+			friendProgressBar.setVisibility(ProgressBar.GONE);
 			if(feedFilePaths.size()<1){
 				Toast.makeText(getApplicationContext(), MyApplication.currentFriend+" has no story pics", Toast.LENGTH_LONG).show();
+			finish();
 			}else{
-			friendProgressBar.setVisibility(ProgressBar.GONE);
+			
 			adapter = new MyAdapter(getApplicationContext());
 			gridView.setAdapter(adapter);
 			}
